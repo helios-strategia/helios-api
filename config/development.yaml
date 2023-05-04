@@ -1,0 +1,28 @@
+http:
+  host: 'localhost'
+  port: 3034
+
+jwt:
+  secret: 'qnaotr43'
+  secret_refresh: '7xfn849f'
+  header: 'Authorization'
+  expiration: 72000
+  expiration_refresh: 6048000
+
+database:
+  host: 'localhost'
+  name: 'helios'
+  user: 'helios_admin'
+  password: 'dummy'
+  port: 55432
+
+file_storage:
+  minio:
+    end_point: 'localhost'
+    port: 9010
+    use_ssl: false
+    root_user: 'minio_admin'
+    root_password: 'minio_admin'
+    bucket_name: 'public'
+    create_bucket: true
+    default_public_bucket: 'public'
