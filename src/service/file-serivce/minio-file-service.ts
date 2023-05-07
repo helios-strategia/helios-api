@@ -20,6 +20,24 @@ export class MinioFileService implements FileService, OnApplicationBootstrap {
     if (process.env.NODE_ENV === 'development') {
       if (!(await this.minio.client.bucketExists('public'))) {
         await this.minio.client.makeBucket('public');
+
+        await this.minio.client.setBucketPolicy(
+          'public',
+          JSON.stringify({
+            Version: '2012-10-17',
+            Statement: [
+              {
+                Action: ['s3:GetObject'],
+                Effect: 'Allow',
+                Principal: {
+                  AWS: ['*'],
+                },
+                Resource: ['arn:aws:s3:::public/*'],
+                Sid: '',
+              },
+            ],
+          }),
+        );
       }
     }
   }

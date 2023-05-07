@@ -27,7 +27,6 @@
     "@automapper/classes": "^8.7.5",
     "@automapper/core": "^8.7.5",
     "@automapper/nestjs": "^8.7.5",
-    "@eduardoy228/-helios-types": "^1.0.1",
     "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",

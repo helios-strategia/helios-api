@@ -19,7 +19,7 @@ import { PlantProductivityDeclineRate } from '@/api/plant/plant-types';
 import { PlantEquipmentsStatus } from '@/api/plant-equipments-status/plant-equipments-status.entity';
 import { PlantStatusHistory } from '@/api/plant-status-history/plant-status-history.entity';
 
-@Index(['user', 'ascmePlantCode'], { unique: true })
+@Index(['ascmePlantCode'], { unique: true })
 @Entity('plants')
 export class Plant extends BaseEntity {
   @Column('integer', { name: 'ac_power', nullable: true })
@@ -38,7 +38,7 @@ export class Plant extends BaseEntity {
   @Column('double precision', { name: 'area', nullable: true })
   area: number | null;
 
-  @Column('bigint', { name: 'ascme_plant_code', nullable: true })
+  @Column('bigint', { name: 'ascme_plant_code', nullable: true, unique: true })
   ascmePlantCode: string | null;
 
   @Column('timestamp without time zone', {

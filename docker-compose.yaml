@@ -40,7 +40,18 @@ services:
     ports:
       - "3034:3034"
     environment:
-      NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 }, "file_storage": { "minio": { "end_point": "storage" } } }'
+      NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 }, "file_storage": { "minio": { "end_point": "storage", "port": 9000 } } }'
+  seeding:
+    depends_on:
+      - app
+    build: .
+    command: "npm run db:seed"
+    environment:
+      NODE_CONFIG: '{ "database": { "host": "db", "port": 5432 } }'
+    restart: no
+    profiles:
+      - dev
+
 volumes:
   db_data:
   storage:
