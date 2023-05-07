@@ -1,14 +1,7 @@
-import { format, LoggerOptions, transports } from 'winston';
+import { format, transports } from 'winston';
+import { myFormat } from '@/logger/format';
 
-const myFormat = format.printf(({ level, message, timestamp, ...metadata }) => {
-  let msg = `${timestamp} [${level}] : ${message} `;
-  if (metadata) {
-    msg += JSON.stringify(metadata);
-  }
-  return msg;
-});
-
-const TransportsStrategy = (env: string) => {
+export const TransportsStrategy = (env: string) => {
   switch (env) {
     case 'production':
       return [
@@ -50,12 +43,4 @@ const TransportsStrategy = (env: string) => {
         }),
       ];
   }
-};
-
-export const loggerOptions: LoggerOptions = {
-  transports: [
-    new transports.Console({
-      format: format.combine(format.colorize(), format.timestamp(), myFormat),
-    }),
-  ],
 };
