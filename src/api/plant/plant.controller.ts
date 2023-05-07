@@ -20,14 +20,11 @@ import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
 import { RolesGuard } from '@/api/auth/roles.guard';
 import { PlantService } from '@/api/plant/plant.service';
 import { Roles } from '@/api/auth/roles.decorator';
-import {
-  PlantCreateRequestDto,
-  PlantUpdateRequestDto,
-} from '@/api/plant/plant.dto';
 import { FormDataRequest } from 'nestjs-form-data';
 import { GetEntityPipe } from '@/api/plant/get-entity.pipe';
 import { UserRole } from '@/api/user/user-role.enum';
 import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { PlantCreateRequestDto, PlantUpdateRequestDto } from '@/api/plant/dto';
 
 @ApiBearerAuth()
 @ApiTags('plants')

@@ -100,7 +100,6 @@ export class Plant extends BaseEntity {
   )
   public readonly plantEquipmentsStatus: PlantEquipmentsStatus[];
 
-  @Expose()
   @OneToMany(
     () => PlantStatusHistory,
     (plantStatusHistory) => plantStatusHistory.plant,
@@ -111,4 +110,28 @@ export class Plant extends BaseEntity {
     },
   )
   public readonly plantStatusHistory: PlantStatusHistory[];
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'contact_person_name',
+    nullable: true,
+  })
+  public readonly contactPersonName: string;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'contact_person_phone',
+    nullable: true,
+  })
+  public readonly contactPersonPhone: string;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    name: 'contact_person_email',
+    nullable: true,
+  })
+  public readonly contactPersonEmail: string;
 }

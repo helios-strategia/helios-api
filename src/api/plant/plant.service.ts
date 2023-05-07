@@ -1,9 +1,5 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PlantRepository } from '@/api/plant/plant.repository';
-import {
-  PlantCreateRequestDto,
-  PlantUpdateRequestDto,
-} from '@/api/plant/plant.dto';
 import { PlantDocumentService } from '@/api/plant-document/plant-document.service';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { UserService } from '@/api/user/user.service';
@@ -18,6 +14,11 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Events } from '@/events/events.enum';
 import { PlantCreatedEvent } from '@/events/plant/plant-created.event';
 import { PlantStatusUpdatedEvent } from '@/events/plant/plant-status-updated.event';
+import {
+  PlantCreateRequestDto,
+  PlantProductivityDeclineRateRequestDto,
+  PlantUpdateRequestDto,
+} from '@/api/plant/dto';
 
 @Injectable()
 export class PlantService {
@@ -51,6 +52,7 @@ export class PlantService {
       latitude,
       longitude,
       status,
+      plantProductivityDeclineRate,
       ...restCreatePayload
     } = plantCreateRequestDto;
 
@@ -78,7 +80,7 @@ export class PlantService {
       Logger.log('PlantService#create documents saved');
     }
 
-    const plant: Plant = await this.plantRepository.save({
+    const plant = await this.plantRepository.save({
       documents: documentsSaved,
       location: {
         lat: latitude,
@@ -86,16 +88,9 @@ export class PlantService {
       },
       user,
       status,
-      plantProductivityDeclineRate:
-        restCreatePayload?.plantProductivityDeclineRateRequestDto?.reduce(
-          (acc, { year, coefficient }) => {
-            return {
-              [year]: coefficient,
-              ...acc,
-            };
-          },
-          {},
-        ),
+      plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
+        plantProductivityDeclineRate,
+      ),
       ...restCreatePayload,
     });
 
@@ -214,5 +209,18 @@ export class PlantService {
 
   public async saveAll(plants: Plant[]) {
     return this.plantRepository.save(plants);
+  }
+
+  private transformArrayPlantDeclineRatesToObj(
+    plantProductivityDeclineRateRequestDto: PlantProductivityDeclineRateRequestDto[],
+  ) {
+    return plantProductivityDeclineRateRequestDto?.reduce<
+      Record<string, number>
+    >((acc, { year, coefficient }) => {
+      return {
+        [year]: coefficient,
+        ...acc,
+      };
+    }, {});
   }
 }

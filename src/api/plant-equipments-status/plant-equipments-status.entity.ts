@@ -9,19 +9,16 @@ import {
 } from 'typeorm';
 import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { Plant } from '@/api/plant/plant.entity';
-export enum EquipmentType {
-  ExternalPowerSupply,
-  DCCircuit,
-}
+import { PlantEquipmentType } from '@/api/plant-equipments-status/plant-equipment-type.enum';
 
 @Entity('plant_equipments_status')
 @Index(['equipmentType', 'plant'], { unique: true })
 export class PlantEquipmentsStatus extends BaseEntity {
   @Column('enum', {
     name: 'equipment_type',
-    enum: EquipmentType,
+    enum: PlantEquipmentType,
   })
-  public readonly equipmentType: EquipmentType;
+  public readonly equipmentType: PlantEquipmentType;
 
   @OneToMany(
     () => PlantsEquipmentsEvents,

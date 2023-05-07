@@ -56,4 +56,13 @@ export class PlantResponseDto {
 
   @AutoMap()
   plantProductivityDeclineRate: PlantProductivityDeclineRate;
+
+  @AutoMap()
+  public readonly contactPersonName: string;
+
+  @AutoMap()
+  public readonly contactPersonPhone: string;
+
+  @AutoMap()
+  public readonly contactPersonEmail: string;
 }
