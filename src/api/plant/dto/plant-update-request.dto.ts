@@ -94,7 +94,7 @@ export class PlantUpdateRequestDto {
   public readonly employeesId?: number[];
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   @IsPositive()

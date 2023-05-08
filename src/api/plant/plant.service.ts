@@ -12,13 +12,13 @@ import { UserRole } from '@/api/user/user-role.enum';
 import { ValidationError } from '@/error/validation.error';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Events } from '@/events/events.enum';
-import { PlantCreatedEvent } from '@/events/plant/plant-created.event';
 import { PlantStatusUpdatedEvent } from '@/events/plant/plant-status-updated.event';
 import {
   PlantCreateRequestDto,
   PlantProductivityDeclineRateRequestDto,
   PlantUpdateRequestDto,
 } from '@/api/plant/dto';
+import { PlantStatusHistoryService } from '@/api/plant-status-history/plant-status-history.service';
 
 @Injectable()
 export class PlantService {
@@ -28,6 +28,8 @@ export class PlantService {
   private readonly documentService: PlantDocumentService;
   @Inject(UserService)
   private readonly userService: UserService;
+  @Inject(PlantStatusHistoryService)
+  private readonly plantStatusHistoryService: PlantStatusHistoryService;
   @Inject(TimeService)
   private readonly timeService: TimeService;
   @Inject(EventEmitter2)
@@ -88,16 +90,24 @@ export class PlantService {
       ...restCreatePayload,
     });
 
-    Logger.log('PlantService#create plant saved', {
+    const plantStatusHistory = await this.plantStatusHistoryService.create(
       plant,
-    });
-
-    this.eventEmitter.emit(
-      Events.PlantCreated,
-      new PlantCreatedEvent({ plant }),
     );
 
-    return plant;
+    Logger.log('PlantService#create plant saved', {
+      plant,
+      plantStatusHistory,
+    });
+
+    return this.plantRepository.find({
+      where: { id: plant.id },
+      relations: {
+        user: true,
+        documents: true,
+        employees: true,
+        plantStatusHistory: true,
+      },
+    });
   }
 
   public async findById(id: number) {
@@ -156,36 +166,36 @@ export class PlantService {
       throw new NoDataFoundError(Plant, id);
     }
 
-    const res = await this.plantRepository.update(id, {
+    await this.plantRepository.update(id, {
       plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
         plantProductivityDeclineRate,
       ),
       ...restUpdate,
     });
 
-    Logger.log('PlantService#update end', { ...res });
-
     const updatedPlant = await this.plantRepository.findOne({
       where: { id },
+    });
+
+    if (oldPlant.status !== updatedPlant.status) {
+      await this.plantStatusHistoryService.createOnUpdatedPlant({
+        prevStatus: oldPlant.status,
+        currentStatus: updatedPlant.status,
+        plant: updatedPlant,
+      });
+    }
+
+    Logger.log('PlantService#update end', { updatedPlant });
+
+    return this.plantRepository.find({
+      where: { id: updatedPlant.id },
       relations: {
         user: true,
         documents: true,
         employees: true,
+        plantStatusHistory: true,
       },
     });
-
-    if (oldPlant.status !== updatedPlant.status) {
-      this.eventEmitter.emit(
-        Events.PlantStatusUpdated,
-        new PlantStatusUpdatedEvent({
-          prevStatus: oldPlant.status,
-          currentStatus: updatedPlant.status,
-          plant: updatedPlant,
-        }),
-      );
-    }
-
-    return updatedPlant;
   }
 
   public async isPresent(id: number): Promise<boolean> {

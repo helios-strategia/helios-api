@@ -7,6 +7,7 @@ import { PlantRepository } from '@/api/plant/plant.repository';
 import { PlantDocumentModule } from '@/api/plant-document/plant-document.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { UserModule } from '@/api/user/user.module';
+import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-status-history.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from '@/api/user/user.module';
     PlantDocumentModule,
     NestjsFormDataModule,
     UserModule,
+    PlantStatusHistoryModule,
   ],
   controllers: [PlantController],
   providers: [PlantService, PlantRepository],
