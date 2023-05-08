@@ -75,8 +75,11 @@ export class Plant extends BaseEntity {
   })
   public readonly employees: Employee[];
 
-  @Column('jsonb', { nullable: true })
-  public readonly location?: { lat: number; lon: number };
+  @Column('int', { nullable: true, name: 'location_latitude' })
+  public readonly locationLatitude: number | null;
+
+  @Column('int', { nullable: true, name: 'location_longitude' })
+  public readonly locationLongitude: number | null;
 
   @ManyToOne(() => User, (user) => user.plants, {
     onDelete: 'NO ACTION',

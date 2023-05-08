@@ -49,8 +49,6 @@ export class PlantService {
       userId,
       documents,
       documentTypes,
-      latitude,
-      longitude,
       status,
       plantProductivityDeclineRate,
       ...restCreatePayload
@@ -82,10 +80,6 @@ export class PlantService {
 
     const plant = await this.plantRepository.save({
       documents: documentsSaved,
-      location: {
-        lat: latitude,
-        lon: longitude,
-      },
       user,
       status,
       plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
@@ -144,14 +138,15 @@ export class PlantService {
   }
 
   public async update(
-    { latitude, longitude, ...restUpdate }: PlantUpdateRequestDto,
+    plantUpdateRequestDto: PlantUpdateRequestDto,
     id: number,
   ) {
     Logger.log('PlantService#update', {
-      latitude,
-      longitude,
-      ...restUpdate,
+      plantUpdateRequestDto,
     });
+
+    const { plantProductivityDeclineRate, ...restUpdate } =
+      plantUpdateRequestDto;
 
     const oldPlant = await this.plantRepository.findOne({
       where: { id },
@@ -162,14 +157,10 @@ export class PlantService {
     }
 
     const res = await this.plantRepository.update(id, {
+      plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
+        plantProductivityDeclineRate,
+      ),
       ...restUpdate,
-      ...((longitude || latitude) && {
-        location: {
-          ...oldPlant.location,
-          ...(longitude && { lon: longitude }),
-          ...(latitude && { lat: latitude }),
-        },
-      }),
     });
 
     Logger.log('PlantService#update end', { ...res });

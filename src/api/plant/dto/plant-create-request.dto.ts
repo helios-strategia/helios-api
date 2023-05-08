@@ -72,7 +72,7 @@ export class PlantCreateRequestDto {
   @IsNumber()
   @Min(-90)
   @Max(90)
-  public readonly latitude: number;
+  public readonly locationLatitude: number;
 
   @ApiProperty()
   @Type(() => Number)
@@ -80,7 +80,7 @@ export class PlantCreateRequestDto {
   @IsNumber()
   @Min(-180)
   @Max(180)
-  public readonly longitude: number;
+  public readonly locationLongitude: number;
 
   @ApiProperty()
   @IsOptional()
@@ -107,6 +107,7 @@ export class PlantCreateRequestDto {
 
   @IsOptional()
   @ValidateNested({ each: true })
+  @Type(() => PlantProductivityDeclineRateRequestDto)
   public readonly plantProductivityDeclineRate: PlantProductivityDeclineRateRequestDto[];
 
   @IsOptional()

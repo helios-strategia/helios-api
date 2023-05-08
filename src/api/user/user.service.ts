@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   UserCreateRequestDto,
   UserProfileUpdateRequestDto,
@@ -13,6 +13,7 @@ import { omit } from 'lodash';
 import { UserRepository } from '@/api/user/user.repository';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 import { UserRole } from '@/api/user/user-role.enum';
+import { NoDataFoundError } from '@/error/no-data-found.error';
 
 @Injectable()
 export class UserService {
@@ -61,6 +62,10 @@ export class UserService {
     payload: UserUpdateRequestDto | UserProfileUpdateRequestDto,
   ) {
     Logger.log('UserService#update', omit(payload, 'avatar'));
+
+    if (!(await this.isPresentById(id))) {
+      throw new NoDataFoundError(User, id);
+    }
 
     let avatarUrl: string;
 

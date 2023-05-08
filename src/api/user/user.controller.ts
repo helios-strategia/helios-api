@@ -12,8 +12,8 @@ import {
   Post,
   Req,
   Request,
-  UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import {
@@ -24,7 +24,6 @@ import {
 import { UserService } from './user.service';
 import { FormDataRequest } from 'nestjs-form-data';
 import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
-import { AxiosExceptionFilter } from '@/filter/axios-exception.filter';
 import { Roles } from '@/api/auth/roles.decorator';
 import { RolesGuard } from '@/api/auth/roles.guard';
 import {
@@ -37,6 +36,7 @@ import {
 } from '@nestjs/swagger';
 import { FileService } from '@/service/file-serivce/file-service';
 import { UserRole } from '@/api/user/user-role.enum';
+import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -58,8 +58,8 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @Post()
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(ValidateContentTypeMiddleware)
   @FormDataRequest()
-  @UseFilters(new AxiosExceptionFilter())
   public async create(
     @Body() userCreateDto: UserCreateRequestDto,
   ): Promise<UserResponseDto> {
@@ -94,23 +94,19 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @Patch(':id')
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(ValidateContentTypeMiddleware)
   @FormDataRequest()
-  @UseFilters(new AxiosExceptionFilter())
   private async update(
     @Param() { id }: { id: number },
     @Body() update: UserUpdateRequestDto,
   ): Promise<UserResponseDto> {
-    if (!(await this.service.isPresentById(id))) {
-      throw new NotFoundException('user not found');
-    }
-
     return this.service.update(id, update);
   }
 
   @ApiConsumes('multipart/form-data')
   @Patch('updateProfile/:id')
+  @UseInterceptors(ValidateContentTypeMiddleware)
   @FormDataRequest()
-  @UseFilters(new AxiosExceptionFilter())
   public async updateProfile(
     @Param() { id }: { id: number },
     @Body() update: UserUpdateRequestDto,

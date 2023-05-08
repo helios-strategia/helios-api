@@ -49,7 +49,10 @@ export class PlantResponseDto {
   plantStatusHistory: PlantStatusHistory[];
 
   @AutoMap()
-  location: { lat: number; lon: number };
+  public readonly locationLongitude: number | null;
+
+  @AutoMap()
+  public readonly locationLatitude: number | null;
 
   @AutoMap()
   userId: number;

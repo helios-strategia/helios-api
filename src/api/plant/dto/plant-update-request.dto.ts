@@ -12,10 +12,12 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PlantStatus } from '@/api/plant/plant-status.enum';
 import { stringifyEnumValues } from '@/utils';
+import { PlantProductivityDeclineRateRequestDto } from '@/api/plant/dto/plant-productivity-decline-rate-request.dto';
 
 export class PlantUpdateRequestDto {
   @ApiProperty()
@@ -74,7 +76,7 @@ export class PlantUpdateRequestDto {
   @IsNumber()
   @Min(-90)
   @Max(90)
-  public readonly latitude?: number;
+  public readonly locationLatitude?: number;
 
   @ApiProperty()
   @IsOptional()
@@ -83,7 +85,7 @@ export class PlantUpdateRequestDto {
   @IsNumber()
   @Min(-180)
   @Max(180)
-  public readonly longitude?: number;
+  public readonly locationLongitude?: number;
 
   @ApiProperty()
   @IsOptional()
@@ -97,6 +99,11 @@ export class PlantUpdateRequestDto {
   @IsNumber()
   @IsPositive()
   public readonly userId: number;
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => PlantProductivityDeclineRateRequestDto)
+  public readonly plantProductivityDeclineRate: PlantProductivityDeclineRateRequestDto[];
 
   @IsOptional()
   @IsString()
