@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Plant } from '../plant/plant.entity';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 
 @Entity('plant_documents', { schema: 'public' })
@@ -13,11 +13,11 @@ export class PlantDocument extends BaseEntity {
   })
   documentType: PlantDocumentType;
 
-  @Column('text', { name: 'name', nullable: true })
-  name: string | null;
+  @Column('text', { name: 'name', nullable: false })
+  name: string;
 
-  @Column('text', { name: 'url', nullable: true })
-  url: string | null;
+  @Column('text', { name: 'url', nullable: false })
+  url: string;
 
   @ManyToOne(() => Plant, (plant) => plant.documents, {
     createForeignKeyConstraints: false,

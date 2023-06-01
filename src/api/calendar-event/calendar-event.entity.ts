@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 import { Plant } from '../plant/plant.entity';
 
 @Index('plant_id_index', ['plant'], { unique: true })

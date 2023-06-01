@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 import { SourcePoint } from '../source-point/source-point.entity';
 
 @Index('model_30817_date_index', ['date', 'id'], {})

@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Model_30917 } from '../model-30917/model-30917.entity';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 import { Model_30817 } from '../model-30817/model-30817.entity';
 import { Model_30818 } from '../model-30818/model-30818.entity';
 import { Exclude } from 'class-transformer';

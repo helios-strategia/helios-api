@@ -27,7 +27,7 @@ import {
   EmployeeUpdateRequestDto,
 } from '@/api/employee/employee.dto';
 import { Roles } from '@/api/auth/roles.decorator';
-import { UserRole } from '@/api/user/user-role.enum';
+import { UserRole } from '@/types/user';
 
 @ApiBearerAuth()
 @ApiTags('employees')

@@ -1,10 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  UserCreateRequestDto,
-  UserProfileUpdateRequestDto,
-  UserResponseDto,
-  UserUpdateRequestDto,
-} from './user.dto';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
@@ -12,8 +6,12 @@ import { hash } from 'bcrypt';
 import { omit } from 'lodash';
 import { UserRepository } from '@/api/user/user.repository';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
-import { UserRole } from '@/api/user/user-role.enum';
 import { NoDataFoundError } from '@/error/no-data-found.error';
+import { UserResponseDto } from '@/api/user/dto/user.response.dto';
+import { UserCreateRequestDto } from '@/api/user/dto/user-create.request.dto';
+import { UserUpdateRequestDto } from '@/api/user/dto/user-update.request.dto';
+import { UserProfileUpdateRequestDto } from '@/api/user/dto/user-profile-update.request.dto';
+import { UserRole } from '@/types/user';
 
 @Injectable()
 export class UserService {

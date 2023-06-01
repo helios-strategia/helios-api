@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Employee } from '../employee/employee.entity';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 
 @Entity('positions')
 export class Position extends BaseEntity {

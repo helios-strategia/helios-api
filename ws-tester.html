@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+  <style>
+      pre {
+          background-color: #f5f5f5;
+          border: 1px solid #ddd;
+          border-left: 3px solid #f36d33;
+          color: #666;
+          page-break-inside: avoid;
+          font-family: monospace;
+          font-size: 15px;
+          line-height: 1.6;
+          margin-bottom: 1.6em;
+          max-width: 100%;
+          overflow: auto;
+          padding: 1em 1.5em;
+          display: block;
+          word-wrap: break-word;
+      }
+  </style>
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+          integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+          crossorigin="anonymous"></script>
+  <script>
+    const displayMessage = (message) => {
+      const p = document.createElement("p");
+
+      if (typeof message === "object" && "constructor" in message && typeof message.constructor === "function") {
+        p.innerHTML = `Payload: <pre>${JSON.stringify(message, null, 2)}</pre> <span style="color: darkgreen; font-style: italic;">[${new Date().toISOString()}]</span>`;
+      } else {
+        p.innerHTML = `${message} <span style="color: darkgreen; font-style: italic;">[${new Date().toISOString()}]</span>`;
+      }
+
+      document.getElementById("feed").appendChild(p);
+    };
+
+    const socket = io("http://localhost:3034");
+
+    socket.on("connect", () => {
+      console.log("Connected");
+      displayMessage("Connected");
+    });
+
+    socket.on("plants-equipments-events:created", (data) => {
+      console.log("plants-equipments-events:created", data);
+      displayMessage(data);
+    });
+
+    socket.on("plants-equipments-events:deleted", (data) => {
+      console.log("plants-equipments-events:deleted", data);
+      displayMessage(data);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Disconnected");
+      displayMessage("Disconnected");
+    });
+  </script>
+  <title>WS Tester</title>
+</head>
+<body>
+<p id="feed" style="font-size: 24px; margin-left: 20px"></p>
+</body>
+</html>

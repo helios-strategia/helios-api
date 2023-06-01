@@ -6,6 +6,7 @@ import {
   Get,
   HttpStatus,
   Inject,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -22,9 +23,11 @@ import { PlantService } from '@/api/plant/plant.service';
 import { Roles } from '@/api/auth/roles.decorator';
 import { FormDataRequest } from 'nestjs-form-data';
 import { GetEntityPipe } from '@/api/plant/get-entity.pipe';
-import { UserRole } from '@/api/user/user-role.enum';
 import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
 import { PlantCreateRequestDto, PlantUpdateRequestDto } from '@/api/plant/dto';
+import { UserRole } from '@/types/user';
+import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
+import { isNil } from 'lodash';
 
 @ApiBearerAuth()
 @ApiTags('plants')
@@ -34,6 +37,9 @@ import { PlantCreateRequestDto, PlantUpdateRequestDto } from '@/api/plant/dto';
 export class PlantController {
   @Inject(PlantService)
   private readonly plantService: PlantService;
+
+  @Inject(PlantEquipmentsService)
+  private readonly plantEquipmentsService: PlantEquipmentsService;
 
   @ApiConsumes('multipart/form-data')
   @Post()
@@ -54,6 +60,22 @@ export class PlantController {
     id: number,
   ) {
     return this.plantService.findById(id);
+  }
+
+  @UsePipes(new GetEntityPipe())
+  @Get('/:id/plant-equipments')
+  private async getPlantEquipments(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    if (isNil(await this.plantService.findById(id))) {
+      throw new NotFoundException(`Plant [${id}] doesn't exists`);
+    }
+
+    return this.plantEquipmentsService.getByPlant(id);
   }
 
   @Roles(UserRole.ADMIN)

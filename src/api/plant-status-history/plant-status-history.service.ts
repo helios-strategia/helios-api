@@ -1,9 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
-import { Events } from '@/events/events.enum';
 import { PlantStatusHistoryRepository } from '@/api/plant-status-history/plant-status-history.repository';
-import { PlantStatusUpdatedEvent } from '@/events/plant/plant-status-updated.event';
 import { Plant } from '@/api/plant/plant.entity';
+import { PlantStatus } from '@/types/plant';
 
 @Injectable()
 export class PlantStatusHistoryService {
@@ -11,10 +9,13 @@ export class PlantStatusHistoryService {
   private readonly plantStatusHistoryRepository: PlantStatusHistoryRepository;
 
   public async create(plant: Plant) {
-    const plantStatusHistory = await this.plantStatusHistoryRepository.save({
-      currentStatus: plant.status,
-      plant,
-    });
+    const plantStatusHistory = await this.plantStatusHistoryRepository.save(
+      {
+        currentStatus: plant.status,
+        plant,
+      },
+      { transaction: false },
+    );
 
     Logger.log('PlantStatusHistoryService#create', {
       plantStatusHistory,
@@ -27,15 +28,24 @@ export class PlantStatusHistoryService {
     prevStatus,
     currentStatus,
     plant,
-  }: PlantStatusUpdatedEvent) {
-    const plantStatusHistory = await this.plantStatusHistoryRepository.save({
-      previousStatus: prevStatus,
-      currentStatus,
-      plant,
-    });
+  }: {
+    prevStatus: PlantStatus;
+    currentStatus: PlantStatus;
+    plant: Plant;
+  }) {
+    const plantStatusHistory = await this.plantStatusHistoryRepository.save(
+      {
+        previousStatus: prevStatus,
+        currentStatus,
+        plant,
+      },
+      { transaction: false },
+    );
 
     Logger.log('PlantStatusHistoryService#createOnUpdatedPlant', {
       plantStatusHistory,
     });
+
+    return plantStatusHistory;
   }
 }

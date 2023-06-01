@@ -17,7 +17,7 @@ import { RolesGuard } from '@/api/auth/roles.guard';
 import { Roles } from '@/api/auth/roles.decorator';
 import { SourcePointRequestUpdateDto } from '@/api/source-point/source-point.dto';
 import { SourcePointService } from '@/api/source-point/source-point.service';
-import { UserRole } from '@/api/user/user-role.enum';
+import { UserRole } from '@/types/user';
 
 @Roles(UserRole.ADMIN)
 @ApiBearerAuth()

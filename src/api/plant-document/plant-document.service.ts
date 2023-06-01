@@ -3,7 +3,6 @@ import { PlantDocumentRepository } from '@/api/plant-document/plant-document.rep
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
-import { FileService } from '@/service/file-serivce/file-service';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 
 @Injectable()
@@ -13,20 +12,26 @@ export class PlantDocumentService {
   @Inject(MinioFileService)
   private readonly fileService: MinioFileService;
 
-  public async create({
-    documentType,
-    file,
-    plantId,
-  }: {
-    readonly documentType: string;
-    readonly file: MemoryStoredFile;
-    readonly plantId?: number;
-  }): Promise<PlantDocument> {
-    return this.documentRepository.save({
-      url: await this.fileService.upload(file),
-      documentType: PlantDocumentType[documentType] ?? PlantDocumentType.OTHER,
-      name: file.originalName,
-    });
+  public async create(
+    {
+      documentType,
+      file,
+    }: {
+      readonly documentType: string;
+      readonly file: MemoryStoredFile;
+      readonly plantId?: number;
+    },
+    isTrx: boolean,
+  ): Promise<PlantDocument> {
+    return this.documentRepository.save(
+      {
+        url: await this.fileService.upload(file),
+        documentType:
+          PlantDocumentType[documentType] ?? PlantDocumentType.OTHER,
+        name: file.originalName,
+      },
+      { transaction: isTrx },
+    );
   }
 
   public async createMany(
@@ -35,8 +40,9 @@ export class PlantDocumentService {
       readonly file: MemoryStoredFile;
       readonly plantId?: number;
     }[],
+    isTrx = true,
   ) {
-    return Promise.all(documentsToCreate.map((doc) => this.create(doc)));
+    return Promise.all(documentsToCreate.map((doc) => this.create(doc, isTrx)));
   }
 
   public async getAll() {
@@ -47,7 +53,7 @@ export class PlantDocumentService {
     });
   }
 
-  public async deleteById(id: number, token: string) {
+  public async deleteById(id: number) {
     try {
       const document = await this.documentRepository.findOne({ where: { id } });
 
@@ -56,12 +62,9 @@ export class PlantDocumentService {
           .count({ where: { name: document.name } })
           .then((count) => count === 1)
       ) {
-        const resFileServer = await this.fileService.delete(
-          document.name,
-          token,
-        );
+        const resFileServer = await this.fileService.delete(document.name);
 
-        Logger.log('PlantDocumentService#deleteById FileService#delete', {
+        Logger.log('PlantDocumentService#deleteById', {
           deleteFileName: resFileServer,
         });
       }

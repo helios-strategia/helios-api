@@ -12,59 +12,70 @@ import { CalendarEvent } from '../calendar-event/calendar-event.entity';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { Employee } from '../employee/employee.entity';
 import { User } from '../user/user.entity';
-import { BaseEntity } from '../base.entity';
-import { Expose } from 'class-transformer';
-import { PlantStatus } from '@/api/plant/plant-status.enum';
-import { PlantProductivityDeclineRate } from '@/api/plant/plant-types';
-import { PlantEquipmentsStatus } from '@/api/plant-equipments-status/plant-equipments-status.entity';
+import { BaseEntity } from '../base-entity/base.entity';
+import { PlantStatus } from '@/types/plant';
+import { PlantEquipments } from '@/api/plant-equipments/plant-equipments.entity';
 import { PlantStatusHistory } from '@/api/plant-status-history/plant-status-history.entity';
+import { PlantProductivityDeclineRate } from '@/types/plant';
+import { AutoMap } from '@automapper/classes';
 
 @Index(['ascmePlantCode'], { unique: true })
 @Entity('plants')
 export class Plant extends BaseEntity {
+  @AutoMap()
   @Column('integer', { name: 'ac_power', nullable: true })
-  acPower: number | null;
+  public readonly acPower: number | null;
 
+  @AutoMap()
   @Column('integer', { name: 'dc_power', nullable: true })
-  dcPower: number | null;
+  public readonly dcPower: number | null;
 
+  @AutoMap(() => [Number])
   @Column('float8', {
     name: 'pvsyst_generation_plan',
     nullable: true,
     array: true,
   })
-  pvsystGenerationPlan: number[] | null;
+  public readonly pvsystGenerationPlan: number[] | null;
 
+  @AutoMap()
   @Column('double precision', { name: 'area', nullable: true })
-  area: number | null;
+  public readonly area: number | null;
 
-  @Column('bigint', { name: 'ascme_plant_code', nullable: true, unique: true })
-  ascmePlantCode: string | null;
+  @AutoMap()
+  @Column('bigint', { name: 'ascme_plant_code', nullable: false, unique: true })
+  public readonly ascmePlantCode: string;
 
+  @AutoMap()
   @Column('timestamp without time zone', {
     name: 'exploitation_start',
     nullable: true,
   })
-  exploitationStart: Date | null;
+  public readonly exploitationStart: Date | null;
 
-  @Column('text', { name: 'name', nullable: true })
-  name: string | null;
+  @AutoMap()
+  @Column('text', { name: 'name', nullable: false })
+  public readonly name: string;
 
-  @Column('text', { name: 'status', nullable: true })
-  status: PlantStatus | null;
+  @AutoMap()
+  @Column('text', { name: 'status', nullable: false })
+  public readonly status: PlantStatus;
 
+  @AutoMap()
   @OneToMany(() => CalendarEvent, (calendarEvent) => calendarEvent.plant, {
     createForeignKeyConstraints: false,
   })
-  calendarEvents: CalendarEvent[];
+  public readonly calendarEvents: CalendarEvent[];
 
+  @AutoMap()
   @OneToMany(() => PlantDocument, (document) => document.plant, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
     createForeignKeyConstraints: false,
   })
-  documents: PlantDocument[];
+  public readonly documents: PlantDocument[];
 
+  @AutoMap()
   @ManyToMany(() => Employee, (employee) => employee.plants, {
     createForeignKeyConstraints: false,
   })
@@ -75,34 +86,41 @@ export class Plant extends BaseEntity {
   })
   public readonly employees: Employee[];
 
+  @AutoMap()
   @Column('int', { nullable: true, name: 'location_latitude' })
   public readonly locationLatitude: number | null;
 
+  @AutoMap()
   @Column('int', { nullable: true, name: 'location_longitude' })
   public readonly locationLongitude: number | null;
 
+  @AutoMap(() => User)
   @ManyToOne(() => User, (user) => user.plants, {
     onDelete: 'NO ACTION',
+    nullable: false,
     createForeignKeyConstraints: false,
   })
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   public readonly user: User;
 
+  @AutoMap()
   @Column('jsonb', {
     name: 'plant_productivity_decline_rate',
     nullable: true,
   })
-  public readonly plantProductivityDeclineRate: PlantProductivityDeclineRate;
+  public readonly plantProductivityDeclineRate: PlantProductivityDeclineRate | null;
 
+  @AutoMap(() => [PlantEquipments])
   @OneToMany(
-    () => PlantEquipmentsStatus,
+    () => PlantEquipments,
     (plantEquipmentsStatus) => plantEquipmentsStatus.plant,
     {
       createForeignKeyConstraints: false,
     },
   )
-  public readonly plantEquipmentsStatus: PlantEquipmentsStatus[];
+  public readonly plantEquipmentsStatus: PlantEquipments[];
 
+  @AutoMap(() => [PlantStatusHistory])
   @OneToMany(
     () => PlantStatusHistory,
     (plantStatusHistory) => plantStatusHistory.plant,
@@ -114,27 +132,30 @@ export class Plant extends BaseEntity {
   )
   public readonly plantStatusHistory: PlantStatusHistory[];
 
+  @AutoMap()
   @Column({
     type: 'varchar',
     length: 255,
     name: 'contact_person_name',
     nullable: true,
   })
-  public readonly contactPersonName: string;
+  public readonly contactPersonName: string | null;
 
+  @AutoMap()
   @Column({
     type: 'varchar',
     length: 255,
     name: 'contact_person_phone',
     nullable: true,
   })
-  public readonly contactPersonPhone: string;
+  public readonly contactPersonPhone: string | null;
 
+  @AutoMap()
   @Column({
     type: 'varchar',
     length: 255,
     name: 'contact_person_email',
     nullable: true,
   })
-  public readonly contactPersonEmail: string;
+  public readonly contactPersonEmail: string | null;
 }

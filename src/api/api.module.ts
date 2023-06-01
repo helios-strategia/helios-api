@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { ServiceModule } from '@/service/service.module';
 import { AscmeModule } from '@/api/ascme/ascme.module';
 import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-status-history.module';
+import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plants-equipments-events.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-statu
     AuthModule,
     AscmeModule,
     PlantStatusHistoryModule,
+    PlantsEquipmentsEventsModule,
   ],
   exports: [
     ServiceModule,
@@ -55,6 +57,7 @@ import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-statu
     AuthModule,
     AscmeModule,
     PlantStatusHistoryModule,
+    PlantsEquipmentsEventsModule,
   ],
 })
 export class ApiModule {}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
+import { TypeOrmConfigService } from './db/typeorm.service';
 import { ApiModule } from './api/api.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { AutomapperModule } from '@automapper/nestjs';
@@ -10,6 +10,7 @@ import { ServiceModule } from './service/service.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import * as config from 'config';
+import { EventsModule } from '@/event/events.module';
 
 @Module({
   imports: [
@@ -38,8 +39,9 @@ import * as config from 'config';
     }),
     EventEmitterModule.forRoot({
       wildcard: true,
-      delimiter: '.',
+      delimiter: ':',
     }),
+    EventsModule,
   ],
 
   controllers: [],

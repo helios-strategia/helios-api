@@ -16,11 +16,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import {
-  UserCreateRequestDto,
-  UserResponseDto,
-  UserUpdateRequestDto,
-} from './user.dto';
 import { UserService } from './user.service';
 import { FormDataRequest } from 'nestjs-form-data';
 import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
@@ -35,8 +30,11 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { FileService } from '@/service/file-serivce/file-service';
-import { UserRole } from '@/api/user/user-role.enum';
 import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { UserResponseDto } from './dto/user.response.dto';
+import { UserCreateRequestDto } from './dto/user-create.request.dto';
+import { UserUpdateRequestDto } from './dto/user-update.request.dto';
+import { UserRole } from '@/types/user';
 
 @ApiBearerAuth()
 @ApiTags('users')

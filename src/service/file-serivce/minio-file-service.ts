@@ -1,46 +1,15 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  OnApplicationBootstrap,
-} from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MinioService } from 'nestjs-minio-client';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { ConfigService } from '@nestjs/config';
 import { FileService } from './file-service.types';
 
 @Injectable()
-export class MinioFileService implements FileService, OnApplicationBootstrap {
+export class MinioFileService implements FileService {
   @Inject(ConfigService)
   private readonly configService: ConfigService;
 
   constructor(private readonly minio: MinioService) {}
-
-  async onApplicationBootstrap() {
-    if (process.env.NODE_ENV === 'development') {
-      if (!(await this.minio.client.bucketExists('public'))) {
-        await this.minio.client.makeBucket('public');
-
-        await this.minio.client.setBucketPolicy(
-          'public',
-          JSON.stringify({
-            Version: '2012-10-17',
-            Statement: [
-              {
-                Action: ['s3:GetObject'],
-                Effect: 'Allow',
-                Principal: {
-                  AWS: ['*'],
-                },
-                Resource: ['arn:aws:s3:::public/*'],
-                Sid: '',
-              },
-            ],
-          }),
-        );
-      }
-    }
-  }
 
   public async delete(
     fileName: string,
@@ -80,10 +49,10 @@ export class MinioFileService implements FileService, OnApplicationBootstrap {
       size: file.size,
     });
 
-    return this.fileUrlResolver({ bucketName, fileName });
+    return this.resolveFileUrl({ bucketName, fileName });
   }
 
-  private fileUrlResolver({
+  private resolveFileUrl({
     bucketName,
     fileName,
   }: {

@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PlantStatus } from '@/api/plant/plant-status.enum';
+import { PlantStatus } from '@/types/plant/plant-status.enum';
 import { AutoMap } from '@automapper/classes';
 import { Type } from 'class-transformer';
 import { Plant } from '@/api/plant/plant.entity';
@@ -16,11 +16,11 @@ export class PlantStatusHistory {
   @AutoMap()
   @Type(() => Number)
   @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-  id: number;
+  public readonly id: number;
 
   @AutoMap()
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  public readonly createdAt: Date;
 
   @AutoMap()
   @Column('enum', {
@@ -38,7 +38,6 @@ export class PlantStatusHistory {
   })
   public readonly currentStatus: PlantStatus;
 
-  @AutoMap(() => Plant)
   @ManyToOne(() => Plant, (plant) => plant.plantStatusHistory, {
     createForeignKeyConstraints: false,
   })

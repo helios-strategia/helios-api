@@ -1,5 +1,5 @@
 import { Column, Entity, Index } from 'typeorm';
-import { BaseEntity } from '../base.entity';
+import { BaseEntity } from '../base-entity/base.entity';
 
 @Index('name_index', ['name'], { unique: true })
 @Entity('model_files', { schema: 'public' })

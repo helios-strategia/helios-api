@@ -21,7 +21,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:seed": "ts-node src/db/seeding/init-seeding.ts"
+    "db:seed": "ts-node src/db/seeding/init-seeding.ts",
+    "storage:create-dev-bucket": "ts-node src/storage/create-dev-bucket.ts"
   },
   "dependencies": {
     "@automapper/classes": "^8.7.5",
@@ -35,15 +36,17 @@
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/platform-socket.io": "^9.0.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.0",
+    "@nestjs/websockets": "^9.0.0",
     "@types/bcryptjs": "^2.4.2",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "bcryptjs": "^2.4.3",
     "class-sanitizer": "^1.0.1",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.14.0",
     "config": "^3.3.9",
     "cross-env": "^7.0.3",
     "date-fns": "^2.29.2",

@@ -5,11 +5,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import * as morgan from 'morgan';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { NoDataFoundExceptionFilter } from '@/filter/no-data-found-exception.filter';
 import { RequestIdInterceptor } from '@/interceptor/request-id.interceptor';
 import { WinstonModule } from 'nest-winston';
 import { loggerOptions } from '@/logger';
-import { ValidationExceptionFilter } from '@/filter/validation-exception.filter';
+import { NoDataFoundErrorFilter } from '@/filter/no-data-found-error.filter';
+import { ValidationErrorFilter } from '@/filter/validation-error.filter';
+import { RouteNoDataFoundErrorFilter } from '@/filter/route-no-data-found-error.filter';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -32,8 +33,11 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new RequestIdInterceptor());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.useGlobalFilters(new NoDataFoundExceptionFilter());
-  app.useGlobalFilters(new ValidationExceptionFilter());
+  app.useGlobalFilters(
+    new NoDataFoundErrorFilter(),
+    new ValidationErrorFilter(),
+    new RouteNoDataFoundErrorFilter(),
+  );
   app.use(
     morgan(
       ':remote-addr :method :url :status :res[content-length] b - :response-time ms',

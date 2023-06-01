@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 import { Plant } from '../plant/plant.entity';
 import { Position } from '../position/position.entity';
-import { BaseEntity } from '../base.entity';
-import { Expose, Transform } from 'class-transformer';
+import { BaseEntity } from '../base-entity/base.entity';
+import { Expose } from 'class-transformer';
 
 export type ScheduleScheme = {
   fiveDaySchedule: boolean;
@@ -34,7 +34,6 @@ export class Employee extends BaseEntity {
   scheduleScheme?: ScheduleScheme;
 
   @Expose({ name: 'plantIds' })
-  @Transform(({ value }) => value?.map((p) => p.id))
   @ManyToMany(() => Plant, (plant) => plant.employees, {
     createForeignKeyConstraints: false,
   })

@@ -8,17 +8,19 @@ import { User } from '@/api/user/user.entity';
 import { isNil, omit } from 'lodash';
 import { TimeService } from '@/service/time-service/time.service';
 import { Plant } from '@/api/plant/plant.entity';
-import { UserRole } from '@/api/user/user-role.enum';
 import { ValidationError } from '@/error/validation.error';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Events } from '@/events/events.enum';
-import { PlantStatusUpdatedEvent } from '@/events/plant/plant-status-updated.event';
 import {
   PlantCreateRequestDto,
   PlantProductivityDeclineRateRequestDto,
   PlantUpdateRequestDto,
 } from '@/api/plant/dto';
 import { PlantStatusHistoryService } from '@/api/plant-status-history/plant-status-history.service';
+import { UserRole } from '@/types/user';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { TransactionPerformer } from '@/service/transaction-performer';
+import { DBConflictError } from '@/error/d-b-conflict.error';
+import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
 
 @Injectable()
 export class PlantService {
@@ -32,8 +34,12 @@ export class PlantService {
   private readonly plantStatusHistoryService: PlantStatusHistoryService;
   @Inject(TimeService)
   private readonly timeService: TimeService;
-  @Inject(EventEmitter2)
-  private eventEmitter: EventEmitter2;
+  @InjectDataSource()
+  private readonly dataSource: DataSource;
+  @Inject(TransactionPerformer)
+  private readonly transactionPerformer: TransactionPerformer;
+  @Inject(PlantEquipmentsService)
+  private readonly plantEquipmentsService: PlantEquipmentsService;
 
   public async create(plantCreateRequestDto: PlantCreateRequestDto) {
     Logger.log('PlantService#create', {
@@ -57,57 +63,95 @@ export class PlantService {
     } = plantCreateRequestDto;
 
     const documentsSaved: PlantDocument[] = [];
-    const user = await this.userService.findById(userId);
+    const [user, plantWithExistingAscme] = await Promise.all([
+      this.userService.findById(userId),
+      this.plantRepository.findOne({
+        where: { ascmePlantCode: plantCreateRequestDto.ascmePlantCode },
+      }),
+    ]);
 
     if (isNil(user)) {
       throw new NoDataFoundError(User, userId);
     }
 
     if (user.role === UserRole.ADMIN) {
-      throw new ValidationError("User related to plant must be a 'CLIENT'");
+      throw new ValidationError('User related to plant must be a [CLIENT]');
     }
 
-    if (documents?.length) {
-      documentsSaved.push(
-        ...(await this.documentService.createMany(
-          documents.map((doc, i) => ({
-            file: doc,
-            documentType: documentTypes[i],
-          })),
-        )),
+    if (!isNil(plantWithExistingAscme)) {
+      throw new DBConflictError(
+        `Plant with current ASCME [${plantCreateRequestDto.ascmePlantCode}] code already exists`,
+      );
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
+      if (documents?.length) {
+        documentsSaved.push(
+          ...(await this.documentService.createMany(
+            documents.map((doc, i) => ({
+              file: doc,
+              documentType: documentTypes[i],
+            })),
+            false,
+          )),
+        );
+
+        Logger.log('PlantService#create documents saved');
+      }
+
+      const plant = await this.plantRepository.save(
+        {
+          documents: documentsSaved,
+          user,
+          status,
+          plantProductivityDeclineRate:
+            this.transformArrayPlantDeclineRatesToObj(
+              plantProductivityDeclineRate,
+            ),
+          ...restCreatePayload,
+        },
+        { transaction: false },
       );
 
-      Logger.log('PlantService#create documents saved');
+      const plantStatusHistory = await this.plantStatusHistoryService.create(
+        plant,
+      );
+
+      const plantEquipments = await this.plantEquipmentsService.createForPlant(
+        plant,
+      );
+
+      await queryRunner.commitTransaction();
+
+      Logger.log('PlantService#create plant saved', {
+        plant,
+        plantStatusHistory,
+        plantEquipments,
+      });
+
+      return this.plantRepository.find({
+        where: { id: plant.id },
+        relations: {
+          user: true,
+          documents: true,
+          employees: true,
+          plantStatusHistory: true,
+        },
+      });
+    } catch (error) {
+      Logger.error('PlantService#create error', {
+        error,
+      });
+
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    const plant = await this.plantRepository.save({
-      documents: documentsSaved,
-      user,
-      status,
-      plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
-        plantProductivityDeclineRate,
-      ),
-      ...restCreatePayload,
-    });
-
-    const plantStatusHistory = await this.plantStatusHistoryService.create(
-      plant,
-    );
-
-    Logger.log('PlantService#create plant saved', {
-      plant,
-      plantStatusHistory,
-    });
-
-    return this.plantRepository.find({
-      where: { id: plant.id },
-      relations: {
-        user: true,
-        documents: true,
-        employees: true,
-        plantStatusHistory: true,
-      },
-    });
   }
 
   public async findById(id: number) {
@@ -136,7 +180,7 @@ export class PlantService {
   }
 
   public async deleteById(id: number) {
-    Logger.log('PlantService#deleteById', { id });
+    Logger.log('PlantService#deleteById', { plantId: id });
 
     const plant = await this.findById(id);
 
@@ -144,7 +188,24 @@ export class PlantService {
       throw new NoDataFoundError(Plant, id);
     }
 
-    return this.plantRepository.delete(id);
+    const result = await this.transactionPerformer.perform({
+      callback: async () => {
+        await Promise.all([
+          this.plantRepository.delete(id),
+          this.plantEquipmentsService.bulkDelete(plant.id),
+        ]);
+      },
+    });
+
+    if (!result.success) {
+      Logger.error('PlantService#deleteById error', {
+        plantId: id,
+      });
+
+      throw result.error;
+    }
+
+    return { message: `Plant [${id}] deleted` };
   }
 
   public async update(
@@ -166,36 +227,53 @@ export class PlantService {
       throw new NoDataFoundError(Plant, id);
     }
 
-    await this.plantRepository.update(id, {
-      plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
-        plantProductivityDeclineRate,
-      ),
-      ...restUpdate,
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
 
-    const updatedPlant = await this.plantRepository.findOne({
-      where: { id },
-    });
-
-    if (oldPlant.status !== updatedPlant.status) {
-      await this.plantStatusHistoryService.createOnUpdatedPlant({
-        prevStatus: oldPlant.status,
-        currentStatus: updatedPlant.status,
-        plant: updatedPlant,
+    try {
+      await this.plantRepository.update(id, {
+        plantProductivityDeclineRate: this.transformArrayPlantDeclineRatesToObj(
+          plantProductivityDeclineRate,
+        ),
+        ...restUpdate,
       });
+
+      const updatedPlant = await this.plantRepository.findOne({
+        where: { id },
+      });
+
+      if (oldPlant.status !== updatedPlant.status) {
+        await this.plantStatusHistoryService.createOnUpdatedPlant({
+          prevStatus: oldPlant.status,
+          currentStatus: updatedPlant.status,
+          plant: updatedPlant,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+
+      Logger.log('PlantService#update end', { updatedPlant });
+
+      return this.plantRepository.find({
+        where: { id: updatedPlant.id },
+        relations: {
+          user: true,
+          documents: true,
+          employees: true,
+          plantStatusHistory: true,
+        },
+      });
+    } catch (error) {
+      Logger.error('PlantService#update error', {
+        error,
+      });
+
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    Logger.log('PlantService#update end', { updatedPlant });
-
-    return this.plantRepository.find({
-      where: { id: updatedPlant.id },
-      relations: {
-        user: true,
-        documents: true,
-        employees: true,
-        plantStatusHistory: true,
-      },
-    });
   }
 
   public async isPresent(id: number): Promise<boolean> {
