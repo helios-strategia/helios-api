@@ -8,9 +8,9 @@ import {
 import { ValidationError } from '@/error/validation.error';
 import { Response } from 'express';
 import { match, P } from 'ts-pattern';
-import { getHttpErrorMessage } from '@/utils';
+import { getApiErrorResponse } from '@/utils';
 import { DBConflictError } from '@/error/d-b-conflict.error';
-import { HttpErrorMessage } from '@/types/common';
+import { ApiErrorResponse } from '@/types/common';
 import { NoDataFoundError } from '@/error/no-data-found.error';
 @Catch()
 export class GenericErrorFilter implements ExceptionFilter {
@@ -18,10 +18,10 @@ export class GenericErrorFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    const [status, body] = match<unknown, [HttpStatus, HttpErrorMessage]>(error)
+    const [status, body] = match<unknown, [HttpStatus, ApiErrorResponse]>(error)
       .with(P.instanceOf(ValidationError), (_, value) => [
         HttpStatus.BAD_REQUEST,
-        getHttpErrorMessage({
+        getApiErrorResponse({
           message: value.message,
           statusCode: HttpStatus.BAD_REQUEST,
           data: value.data,
@@ -29,14 +29,14 @@ export class GenericErrorFilter implements ExceptionFilter {
       ])
       .with(P.instanceOf(DBConflictError), (_, value) => [
         HttpStatus.CONFLICT,
-        getHttpErrorMessage({
+        getApiErrorResponse({
           message: value.message,
           statusCode: HttpStatus.CONFLICT,
         }),
       ])
       .with(P.instanceOf(NoDataFoundError), (_, value) => [
         HttpStatus.BAD_REQUEST,
-        getHttpErrorMessage({
+        getApiErrorResponse({
           message: value.message,
           statusCode: HttpStatus.BAD_REQUEST,
           data: {
@@ -52,7 +52,7 @@ export class GenericErrorFilter implements ExceptionFilter {
 
         return [
           HttpStatus.INTERNAL_SERVER_ERROR,
-          getHttpErrorMessage({
+          getApiErrorResponse({
             message: 'Internal Server Error',
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
             // TODO: only during dev, after finish must be removed!!
@@ -71,7 +71,7 @@ export class GenericErrorFilter implements ExceptionFilter {
 
         return [
           HttpStatus.INTERNAL_SERVER_ERROR,
-          getHttpErrorMessage({
+          getApiErrorResponse({
             message: 'Internal Server Error',
             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
             // TODO: only during dev, after finish must be removed!!

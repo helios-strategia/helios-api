@@ -10,7 +10,7 @@ export class TransactionPerformer {
     callback,
     logMeta,
   }: {
-    callback: () => Promise<T | void>;
+    callback: () => Promise<T | undefined>;
     logMeta?: Record<string, any>;
   }) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -39,7 +39,6 @@ export class TransactionPerformer {
         error,
       };
     } finally {
-      Logger.log('queryRunner.release');
       await queryRunner.release();
     }
   }

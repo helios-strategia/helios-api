@@ -41,7 +41,9 @@ export class PlantEquipmentsService {
   public async getByPlant(plantId: number) {
     return this.plantEquipmentsRepository.find({
       where: { plant: { id: plantId } },
-      relations: { plantsEquipmentsEvents: true },
+      relations: {
+        plantsEquipmentsEvents: { plantEquipmentsEventsImages: true },
+      },
     });
   }
 }

@@ -3,18 +3,14 @@ import {
   IsDateString,
   IsEnum,
   IsNotEmpty,
+  IsNotIn,
   IsNumber,
   IsOptional,
   IsPositive,
   IsString,
   MaxLength,
 } from 'class-validator';
-import {
-  HasMimeType,
-  IsFiles,
-  MaxFileSize,
-  MemoryStoredFile,
-} from 'nestjs-form-data';
+import { IsFiles, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
 import {
   PlantEquipmentEventGenerationAffects,
   PlantEquipmentsEventsCreateRequestDto as PlantEquipmentsEventsCreateRequestDtoType,
@@ -24,9 +20,7 @@ import { PlantEquipmentsType } from 'src/types/plant-equipments';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-export class PlantsEquipmentsEventsCreateRequestDto
-  implements PlantEquipmentsEventsCreateRequestDtoType
-{
+export class PlantsEquipmentsEventsUpdateRequestDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
@@ -34,22 +28,14 @@ export class PlantsEquipmentsEventsCreateRequestDto
 
   @ApiProperty()
   @IsOptional()
-  @IsFiles()
-  @HasMimeType(['image/jpeg', 'image/png'], { each: true })
-  @MaxFileSize(15e6, { each: true })
-  @ArrayMaxSize(15)
-  public readonly images?: MemoryStoredFile[];
-
-  @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  public readonly description: string;
+  public readonly description?: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  public readonly startedAt: Date;
+  public readonly startedAt?: Date;
 
   @ApiProperty()
   @IsOptional()
@@ -57,27 +43,19 @@ export class PlantsEquipmentsEventsCreateRequestDto
   public readonly expectationEndAt?: Date;
 
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(PlantEquipmentEventGenerationAffects, {
     message: enumValidationMessage(
       'generationAffectsType',
       PlantEquipmentEventGenerationAffects,
     ),
   })
-  public readonly generationAffectsType: PlantEquipmentEventGenerationAffects;
+  public readonly generationAffectsType?: PlantEquipmentEventGenerationAffects;
 
   @ApiProperty()
-  @Type(() => Number)
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  //@IsEntityPresent(Plant)
-  public readonly plantId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(PlantEquipmentsType, {
     message: enumValidationMessage('plantEquipmentType', PlantEquipmentsType),
   })
-  public readonly plantEquipmentType: PlantEquipmentsType;
+  public readonly plantEquipmentType?: PlantEquipmentsType;
 }

@@ -2,6 +2,7 @@ import { BaseEntity } from '@/types/base-entity';
 import { PlantStatus } from '@/types/plant';
 import { PlantStatusHistoryResponseDto } from '@/types/plant-status-history';
 import { PlantProductivityDeclineRate } from '@/types/plant/plant-productivity-decline-rate';
+import { UserResponseDto } from '@/types/user';
 
 export interface PlantResponseDto extends BaseEntity {
   readonly ascmePlantCode: string;
@@ -19,4 +20,5 @@ export interface PlantResponseDto extends BaseEntity {
   readonly contactPersonEmail: string | null;
   readonly plantProductivityDeclineRate: PlantProductivityDeclineRate | null;
   readonly plantStatusHistory?: PlantStatusHistoryResponseDto[];
+  readonly user?: UserResponseDto;
 }

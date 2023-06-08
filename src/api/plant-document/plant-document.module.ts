@@ -7,6 +7,7 @@ import { PlantDocumentRepository } from '@/api/plant-document/plant-document.rep
 import { ServiceModule } from '@/service/service.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { PlantModule } from '@/api/plant/plant.module';
+import { PlantDocumentProfile } from '@/api/plant-document/plant-document.profile';
 
 @Module({
   imports: [
@@ -16,7 +17,11 @@ import { PlantModule } from '@/api/plant/plant.module';
     forwardRef(() => PlantModule),
   ],
   controllers: [PlantDocumentController],
-  providers: [PlantDocumentService, PlantDocumentRepository],
+  providers: [
+    PlantDocumentService,
+    PlantDocumentRepository,
+    PlantDocumentProfile,
+  ],
   exports: [PlantDocumentService],
 })
 export class PlantDocumentModule {}

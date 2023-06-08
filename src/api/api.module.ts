@@ -17,6 +17,7 @@ import { ServiceModule } from '@/service/service.module';
 import { AscmeModule } from '@/api/ascme/ascme.module';
 import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-status-history.module';
 import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plants-equipments-events.module';
+import { PlantEquipmentsEventsImagesModule } from '@/api/plant-equipments-events-images/plant-equipments-events-images.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plan
     AscmeModule,
     PlantStatusHistoryModule,
     PlantsEquipmentsEventsModule,
+    PlantEquipmentsEventsImagesModule,
   ],
   exports: [
     ServiceModule,
@@ -58,6 +60,7 @@ import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plan
     AscmeModule,
     PlantStatusHistoryModule,
     PlantsEquipmentsEventsModule,
+    PlantEquipmentsEventsImagesModule,
   ],
 })
 export class ApiModule {}

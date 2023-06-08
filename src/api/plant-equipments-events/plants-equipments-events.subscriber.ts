@@ -12,6 +12,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Events } from '@/types/events';
 import { PlantsEquipmentsEventsCreatedEvent } from '@/event/plants-equipments-events/plants-equipments-events-created.event';
 import { PlantsEquipmentsEventsDeletedEvent } from '@/event/plants-equipments-events/plants-equipments-events-deleted.event';
+import { PlantsEquipmentsEventsUpdatedEvent } from '@/event/plants-equipments-events/plants-equipments-events-updated.event';
 
 @Injectable()
 export class PlantsEquipmentsEventsSubscriber
@@ -39,7 +40,21 @@ export class PlantsEquipmentsEventsSubscriber
     );
   }
 
-  public afterUpdate(event: UpdateEvent<PlantsEquipmentsEvents>): void {}
+  public afterUpdate(event: UpdateEvent<PlantsEquipmentsEvents>): void {
+    Logger.log('PlantsEquipmentsEventsSubscriber#afterUpdate', {
+      databaseEntity: event.databaseEntity?.id,
+      entity: event.entity,
+      updatedColumns: event.updatedColumns,
+    });
+
+    this.eventEmitterService.emit(
+      Events.PlantsEquipmentsEventsUpdated,
+      new PlantsEquipmentsEventsUpdatedEvent(
+        event.entity,
+        event.databaseEntity,
+      ),
+    );
+  }
 
   public afterRemove(event: RemoveEvent<PlantsEquipmentsEvents>): void {
     Logger.log('PlantsEquipmentsEventsSubscriber#afterRemove', {

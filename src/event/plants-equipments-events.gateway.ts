@@ -3,14 +3,14 @@ import {
   WebSocketServer,
   OnGatewayInit,
   OnGatewayConnection,
-  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Inject, Logger } from '@nestjs/common';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { Events } from '@/types/events';
 import { PlantsEquipmentsEventsCreatedEvent } from '@/event/plants-equipments-events/plants-equipments-events-created.event';
 import { PlantsEquipmentsEventsDeletedEvent } from '@/event/plants-equipments-events/plants-equipments-events-deleted.event';
+import { PlantsEquipmentsEventsUpdatedEvent } from '@/event/plants-equipments-events/plants-equipments-events-updated.event';
 
 @WebSocketGateway({
   cors: {
@@ -39,6 +39,15 @@ export class PlantsEquipmentsEventsGateway
     Logger.log('PlantsEquipmentsEventsGateway#plantsEquipmentsEventsDeleted');
 
     this.server.emit(Events.PlantsEquipmentsEventsDeleted, event);
+  }
+
+  @OnEvent(Events.PlantsEquipmentsEventsUpdated)
+  public PlantsEquipmentsEventsUpdated(
+    event: PlantsEquipmentsEventsUpdatedEvent,
+  ) {
+    Logger.log('PlantsEquipmentsEventsGateway#PlantsEquipmentsEventsUpdated');
+
+    this.server.emit(Events.PlantsEquipmentsEventsUpdated, event);
   }
 
   public afterInit(server: any) {

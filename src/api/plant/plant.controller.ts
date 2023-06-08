@@ -28,6 +28,8 @@ import { PlantCreateRequestDto, PlantUpdateRequestDto } from '@/api/plant/dto';
 import { UserRole } from '@/types/user';
 import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
 import { isNil } from 'lodash';
+import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
+import { Plant } from '@/api/plant/plant.entity';
 
 @ApiBearerAuth()
 @ApiTags('plants')
@@ -59,7 +61,7 @@ export class PlantController {
     )
     id: number,
   ) {
-    return this.plantService.findById(id);
+    return this.plantService.getById(id);
   }
 
   @UsePipes(new GetEntityPipe())
@@ -72,7 +74,7 @@ export class PlantController {
     id: number,
   ) {
     if (isNil(await this.plantService.findById(id))) {
-      throw new NotFoundException(`Plant [${id}] doesn't exists`);
+      throw new RouteNoDataFoundError(Plant, id);
     }
 
     return this.plantEquipmentsService.getByPlant(id);

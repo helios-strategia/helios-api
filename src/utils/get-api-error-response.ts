@@ -1,8 +1,8 @@
 import { isEmpty, isNil } from 'lodash';
 import { HttpStatus } from '@nestjs/common';
-import { HttpErrorMessage } from '@/types/common';
+import { ApiErrorResponse } from '@/types/common';
 
-export const getHttpErrorMessage = ({
+export const getApiErrorResponse = ({
   message,
   statusCode,
   data,
@@ -10,7 +10,7 @@ export const getHttpErrorMessage = ({
   message: string;
   statusCode: HttpStatus;
   data?: Record<string, unknown>;
-}): HttpErrorMessage => {
+}): ApiErrorResponse => {
   if (isNil(data) || isEmpty(data)) {
     return {
       message,

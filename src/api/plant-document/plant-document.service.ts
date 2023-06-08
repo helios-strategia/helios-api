@@ -4,6 +4,9 @@ import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { PlantDocumentResponseDto } from '@/api/plant-document/plant-document.response.dto';
 
 @Injectable()
 export class PlantDocumentService {
@@ -11,6 +14,8 @@ export class PlantDocumentService {
   private readonly documentRepository: PlantDocumentRepository;
   @Inject(MinioFileService)
   private readonly fileService: MinioFileService;
+  @InjectMapper()
+  private readonly classMapper: Mapper;
 
   public async create(
     {
@@ -46,11 +51,15 @@ export class PlantDocumentService {
   }
 
   public async getAll() {
-    return this.documentRepository.find({
-      relations: {
-        plant: true,
-      },
-    });
+    return this.classMapper.mapArray(
+      await this.documentRepository.find({
+        relations: {
+          plant: true,
+        },
+      }),
+      PlantDocument,
+      PlantDocumentResponseDto,
+    );
   }
 
   public async deleteById(id: number) {

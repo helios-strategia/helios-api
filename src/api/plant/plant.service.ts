@@ -12,6 +12,7 @@ import { ValidationError } from '@/error/validation.error';
 import {
   PlantCreateRequestDto,
   PlantProductivityDeclineRateRequestDto,
+  PlantResponseDto,
   PlantUpdateRequestDto,
 } from '@/api/plant/dto';
 import { PlantStatusHistoryService } from '@/api/plant-status-history/plant-status-history.service';
@@ -21,6 +22,10 @@ import { DataSource } from 'typeorm';
 import { TransactionPerformer } from '@/service/transaction-performer';
 import { DBConflictError } from '@/error/d-b-conflict.error';
 import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
+import { getDeleteApiResponse } from '@/utils';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
 
 @Injectable()
 export class PlantService {
@@ -40,6 +45,8 @@ export class PlantService {
   private readonly transactionPerformer: TransactionPerformer;
   @Inject(PlantEquipmentsService)
   private readonly plantEquipmentsService: PlantEquipmentsService;
+  @InjectMapper()
+  private readonly classMapper: Mapper;
 
   public async create(plantCreateRequestDto: PlantCreateRequestDto) {
     Logger.log('PlantService#create', {
@@ -132,15 +139,19 @@ export class PlantService {
         plantEquipments,
       });
 
-      return this.plantRepository.find({
-        where: { id: plant.id },
-        relations: {
-          user: true,
-          documents: true,
-          employees: true,
-          plantStatusHistory: true,
-        },
-      });
+      return this.classMapper.map(
+        await this.plantRepository.findOne({
+          where: { id: plant.id },
+          relations: {
+            user: true,
+            documents: true,
+            employees: true,
+            plantStatusHistory: true,
+          },
+        }),
+        Plant,
+        PlantResponseDto,
+      );
     } catch (error) {
       Logger.error('PlantService#create error', {
         error,
@@ -154,6 +165,16 @@ export class PlantService {
     }
   }
 
+  public async getById(id: number) {
+    const plant = await this.plantRepository.findById(id);
+
+    if (isNil(plant)) {
+      throw new RouteNoDataFoundError(Plant, id);
+    }
+
+    return this.classMapper.map(plant, Plant, PlantResponseDto);
+  }
+
   public async findById(id: number) {
     const plant = await this.plantRepository.findById(id);
 
@@ -165,18 +186,26 @@ export class PlantService {
   }
 
   public async findAll() {
-    return this.plantRepository.find({
-      relations: {
-        user: true,
-        documents: true,
-        employees: true,
-        plantStatusHistory: true,
-      },
-    });
+    return this.classMapper.mapArray(
+      await this.plantRepository.find({
+        relations: {
+          user: true,
+          documents: true,
+          employees: true,
+          plantStatusHistory: true,
+        },
+      }),
+      Plant,
+      PlantResponseDto,
+    );
   }
 
   public async findAllByUserId(userId: number) {
-    return this.plantRepository.findByUserId(userId);
+    return this.classMapper.mapArray(
+      await this.plantRepository.findByUserId(userId),
+      Plant,
+      PlantResponseDto,
+    );
   }
 
   public async deleteById(id: number) {
@@ -205,7 +234,7 @@ export class PlantService {
       throw result.error;
     }
 
-    return { message: `Plant [${id}] deleted` };
+    return getDeleteApiResponse(Plant, id);
   }
 
   public async update(
@@ -254,15 +283,19 @@ export class PlantService {
 
       Logger.log('PlantService#update end', { updatedPlant });
 
-      return this.plantRepository.find({
-        where: { id: updatedPlant.id },
-        relations: {
-          user: true,
-          documents: true,
-          employees: true,
-          plantStatusHistory: true,
-        },
-      });
+      return this.classMapper.map(
+        await this.plantRepository.findOne({
+          where: { id: updatedPlant.id },
+          relations: {
+            user: true,
+            documents: true,
+            employees: true,
+            plantStatusHistory: true,
+          },
+        }),
+        Plant,
+        PlantResponseDto,
+      );
     } catch (error) {
       Logger.error('PlantService#update error', {
         error,

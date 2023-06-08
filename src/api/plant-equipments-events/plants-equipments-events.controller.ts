@@ -7,9 +7,9 @@ import {
   Get,
   HttpStatus,
   Inject,
-  Logger,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -23,8 +23,10 @@ import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-typ
 import { FormDataRequest } from 'nestjs-form-data';
 import { PlantsEquipmentsEventsCreateRequestDto } from '@/api/plant-equipments-events/dto/plants-equipments-events-create.request.dto';
 import { PlantsEquipmentsEventsService } from '@/api/plant-equipments-events/plants-equipments-events.service';
-import { DeleteApiResponse, RequestUser } from '@/types/common';
+import { ApiDeleteResponse, RequestUser } from '@/types/common';
 import { Request } from 'express';
+import { PlantsEquipmentsEventsUpdateRequestDto } from '@/api/plant-equipments-events/dto/plants-equipments-events-update.request.dto';
+import { PlantEquipmentsEventsImagesCreateRequestDto } from '@/api/plant-equipments-events-images/dto';
 
 @ApiBearerAuth()
 @ApiTags('Plants Equipments Events')
@@ -64,6 +66,23 @@ export class PlantsEquipmentsEventsController {
     );
   }
 
+  @Patch('/:id')
+  @Roles(UserRole.ADMIN)
+  public async update(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+    @Body()
+    plantsEquipmentsEventsUpdateDto: PlantsEquipmentsEventsUpdateRequestDto,
+  ) {
+    return this.plantsEquipmentsEventsService.update(
+      id,
+      plantsEquipmentsEventsUpdateDto,
+    );
+  }
+
   @Delete('/:id')
   @Roles(UserRole.ADMIN)
   public async delete(
@@ -72,7 +91,43 @@ export class PlantsEquipmentsEventsController {
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-  ): Promise<DeleteApiResponse> {
+  ): Promise<ApiDeleteResponse> {
     return this.plantsEquipmentsEventsService.deleteById(id);
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @Post('/:id/plants-equipments-events-images')
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(ValidateContentTypeMiddleware)
+  @FormDataRequest()
+  public async createImage(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+    @Body()
+    plantEquipmentsEventsImagesCreateRequestDto: PlantEquipmentsEventsImagesCreateRequestDto,
+  ) {
+    return this.plantsEquipmentsEventsService.createImage(
+      id,
+      plantEquipmentsEventsImagesCreateRequestDto,
+    );
+  }
+  @Roles(UserRole.ADMIN)
+  @Delete('/:id/plants-equipments-events-images/:image_id')
+  public async deleteByEvent(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    eventId: number,
+    @Param(
+      'image_id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    return this.plantsEquipmentsEventsService.deleteImageByEventId(id, eventId);
   }
 }

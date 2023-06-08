@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { DBConflictError } from '@/error/d-b-conflict.error';
 import { Response } from 'express';
-import { getHttpErrorMessage } from '@/utils';
+import { getApiErrorResponse } from '@/utils';
 
 @Catch(DBConflictError)
 export class DbConflictErrorFilter implements ExceptionFilter<DBConflictError> {
@@ -16,7 +16,7 @@ export class DbConflictErrorFilter implements ExceptionFilter<DBConflictError> {
     const status = HttpStatus.CONFLICT;
 
     response.status(status).json(
-      getHttpErrorMessage({
+      getApiErrorResponse({
         message: exception.message,
         statusCode: HttpStatus.CONFLICT,
       }),

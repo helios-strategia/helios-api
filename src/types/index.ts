@@ -7,6 +7,7 @@ import * as CommonTypes from './common';
 import * as BaseEntityTypes from './base-entity';
 import * as PlantEquipmentsEventsTypes from './plant-equipments-events';
 import * as EventsTypes from './events';
+import * as PlantEquipmentsEventsImagesTypes from './plant-equipments-events-images';
 
 export {
   PlantStatusHistoryTypes,
@@ -18,4 +19,5 @@ export {
   BaseEntityTypes,
   PlantEquipmentsEventsTypes,
   EventsTypes,
+  PlantEquipmentsEventsImagesTypes,
 };

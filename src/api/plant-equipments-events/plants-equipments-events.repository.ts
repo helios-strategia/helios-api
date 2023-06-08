@@ -4,7 +4,7 @@ import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equ
 
 @Injectable()
 export class PlantsEquipmentsEventsRepository extends Repository<PlantsEquipmentsEvents> {
-  constructor(private dataSource: DataSource) {
+  public constructor(private readonly dataSource: DataSource) {
     super(PlantsEquipmentsEvents, dataSource.createEntityManager());
   }
 }

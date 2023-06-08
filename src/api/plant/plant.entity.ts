@@ -67,7 +67,7 @@ export class Plant extends BaseEntity {
   })
   public readonly calendarEvents: CalendarEvent[];
 
-  @AutoMap()
+  @AutoMap(() => [PlantDocument])
   @OneToMany(() => PlantDocument, (document) => document.plant, {
     onDelete: 'NO ACTION',
     onUpdate: 'NO ACTION',
@@ -103,7 +103,7 @@ export class Plant extends BaseEntity {
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
   public readonly user: User;
 
-  @AutoMap()
+  @AutoMap(() => Object)
   @Column('jsonb', {
     name: 'plant_productivity_decline_rate',
     nullable: true,

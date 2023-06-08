@@ -51,6 +51,11 @@
       displayMessage(data);
     });
 
+    socket.on("plants-equipments-events:updated", (data) => {
+      console.log("plants-equipments-events:deleted", data);
+      displayMessage(data);
+    });
+
     socket.on("disconnect", () => {
       console.log("Disconnected");
       displayMessage("Disconnected");
