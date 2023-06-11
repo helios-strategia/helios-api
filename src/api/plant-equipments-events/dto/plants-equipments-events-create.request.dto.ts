@@ -43,8 +43,14 @@ export class PlantsEquipmentsEventsCreateRequestDto
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @MaxLength(255)
-  public readonly description: string;
+  @MaxLength(1024)
+  public readonly defectDescription: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(1024)
+  public readonly specificationDescription: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -71,7 +77,6 @@ export class PlantsEquipmentsEventsCreateRequestDto
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
-  //@IsEntityPresent(Plant)
   public readonly plantId: number;
 
   @ApiProperty()

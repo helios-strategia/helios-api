@@ -6,7 +6,8 @@ export interface PlantEquipmentsEventsCreateRequestDto {
   readonly location?: string;
   readonly images?: MemoryStoredFile[];
   readonly expectationEndAt?: Date;
-  readonly description: string;
+  readonly defectDescription: string;
+  readonly specificationDescription: string;
   readonly startedAt: Date;
   readonly generationAffectsType: PlantEquipmentEventGenerationAffects;
   readonly plantId: number;

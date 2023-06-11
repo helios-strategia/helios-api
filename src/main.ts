@@ -11,6 +11,7 @@ import { loggerOptions } from '@/logger';
 import { NoDataFoundErrorFilter } from '@/filter/no-data-found-error.filter';
 import { ValidationErrorFilter } from '@/filter/validation-error.filter';
 import { RouteNoDataFoundErrorFilter } from '@/filter/route-no-data-found-error.filter';
+import { DbConflictErrorFilter } from '@/filter/db-conflict-error.filter';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -34,6 +35,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new RequestIdInterceptor());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(
+    new DbConflictErrorFilter(),
     new NoDataFoundErrorFilter(),
     new ValidationErrorFilter(),
     new RouteNoDataFoundErrorFilter(),

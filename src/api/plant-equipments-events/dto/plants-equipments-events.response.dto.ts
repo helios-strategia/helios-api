@@ -15,7 +15,10 @@ export class PlantsEquipmentsEventsResponseDto
   public readonly location: string | null;
 
   @AutoMap()
-  public readonly description: string;
+  public readonly defectDescription: string;
+
+  @AutoMap()
+  public readonly specificationDescription;
 
   @AutoMap()
   public readonly startedAt: Date;

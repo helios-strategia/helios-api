@@ -7,7 +7,8 @@ import { PlantEquipmentsEventsImagesResponseDto } from '@/types/plant-equipments
 export interface PlantEquipmentsEventsResponseDto extends BaseEntity {
   readonly location: string | null;
   readonly expectationEndAt?: Date | null;
-  readonly description: string;
+  readonly defectDescription: string;
+  readonly specificationDescription: string;
   readonly startedAt: Date;
   readonly generationAffectsType: PlantEquipmentEventGenerationAffects;
   readonly plantId: number;

@@ -1,26 +1,19 @@
 import {
-  ArrayMaxSize,
   IsDateString,
   IsEnum,
-  IsNotEmpty,
-  IsNotIn,
-  IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   MaxLength,
 } from 'class-validator';
-import { IsFiles, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
-import {
-  PlantEquipmentEventGenerationAffects,
-  PlantEquipmentsEventsCreateRequestDto as PlantEquipmentsEventsCreateRequestDtoType,
-} from '@/types/plant-equipments-events';
+import { PlantEquipmentEventGenerationAffects } from '@/types/plant-equipments-events';
 import { enumValidationMessage } from '@/utils';
 import { PlantEquipmentsType } from 'src/types/plant-equipments';
+import { PlantEquipmentsEventsUpdateRequestDto as PlantEquipmentsEventsUpdateRequestDtoType } from '@/types/plant-equipments-events';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 
-export class PlantsEquipmentsEventsUpdateRequestDto {
+export class PlantsEquipmentsEventsUpdateRequestDto
+  implements PlantEquipmentsEventsUpdateRequestDtoType
+{
   @ApiProperty()
   @IsOptional()
   @IsString()
@@ -29,8 +22,14 @@ export class PlantsEquipmentsEventsUpdateRequestDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
-  @MaxLength(255)
-  public readonly description?: string;
+  @MaxLength(1024)
+  public readonly defectDescription?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(1024)
+  public readonly specificationDescription?: string;
 
   @ApiProperty()
   @IsOptional()

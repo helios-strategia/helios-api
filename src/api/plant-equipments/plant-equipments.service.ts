@@ -2,11 +2,17 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PlantEquipmentsRepository } from '@/api/plant-equipments/plant-equipments.repository';
 import { PlantEquipmentsType } from '@/types/plant-equipments';
 import { Plant } from '@/api/plant/plant.entity';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { PlantEquipments } from '@/api/plant-equipments/plant-equipments.entity';
+import { PlantEquipmentsResponseDto } from '@/api/plant-equipments/plant-equipments.response.dto';
 
 @Injectable()
 export class PlantEquipmentsService {
   @Inject(PlantEquipmentsRepository)
   private readonly plantEquipmentsRepository: PlantEquipmentsRepository;
+  @InjectMapper()
+  private readonly classMapper: Mapper;
 
   public async createForPlant(plant: Plant) {
     return Promise.all(
@@ -39,11 +45,15 @@ export class PlantEquipmentsService {
   }
 
   public async getByPlant(plantId: number) {
-    return this.plantEquipmentsRepository.find({
-      where: { plant: { id: plantId } },
-      relations: {
-        plantsEquipmentsEvents: { plantEquipmentsEventsImages: true },
-      },
-    });
+    return this.classMapper.mapArray(
+      await this.plantEquipmentsRepository.find({
+        where: { plant: { id: plantId } },
+        relations: {
+          plantsEquipmentsEvents: { plantEquipmentsEventsImages: true },
+        },
+      }),
+      PlantEquipments,
+      PlantEquipmentsResponseDto,
+    );
   }
 }

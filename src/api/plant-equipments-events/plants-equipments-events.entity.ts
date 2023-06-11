@@ -26,8 +26,16 @@ export class PlantsEquipmentsEvents extends BaseEntity {
   @AutoMap()
   @Column('text', {
     nullable: false,
+    name: 'defect_description',
   })
-  public readonly description: string;
+  public readonly defectDescription: string;
+
+  @AutoMap()
+  @Column('text', {
+    nullable: false,
+    name: 'specification_description',
+  })
+  public readonly specificationDescription: string;
 
   @AutoMap()
   @Column('timestamp without time zone', {
@@ -47,7 +55,7 @@ export class PlantsEquipmentsEvents extends BaseEntity {
   @Column('enum', {
     enum: PlantEquipmentEventGenerationAffects,
     name: 'generation_affects_type',
-    default: PlantEquipmentEventGenerationAffects.NotAffectsGeneration,
+    default: PlantEquipmentEventGenerationAffects.AffectsEquipment,
   })
   public readonly generationAffectsType: PlantEquipmentEventGenerationAffects;
 
