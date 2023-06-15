@@ -9,6 +9,8 @@ services:
       MINIO_ROOT_PASSWORD: 'minio_admin'
       MINIO_ADDRESS: ':9000'
       MINIO_CONSOLE_ADDRESS: ':9001'
+      MINIO_NOTIFY_WEBHOOK_ENABLE: on
+      MINIO_NOTIFY_WEBHOOK_ENDPOINT: 'http://localhost:8092/api/v0/test'
     volumes:
       - storage:/var/lib/minio/data
     ports:
@@ -51,6 +53,15 @@ services:
     restart: no
     profiles:
       - dev
+  minio-client:
+    image: minio/mc:latest
+    depends_on:
+      - storage
+    entrypoint: /bin/sh
+    stdin_open: true
+    tty: true
+    ports:
+      - "9000:9000"
 
 volumes:
   db_data:

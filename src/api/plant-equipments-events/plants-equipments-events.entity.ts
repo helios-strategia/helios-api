@@ -38,14 +38,14 @@ export class PlantsEquipmentsEvents extends BaseEntity {
   public readonly specificationDescription: string;
 
   @AutoMap()
-  @Column('timestamp without time zone', {
+  @Column('timestamp with time zone', {
     nullable: false,
     name: 'started_at',
   })
   public readonly startedAt: Date;
 
   @AutoMap()
-  @Column('timestamp without time zone', {
+  @Column('timestamp with time zone', {
     name: 'expectation_end_at',
     nullable: true,
   })

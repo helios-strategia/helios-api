@@ -218,7 +218,7 @@ export class PlantsEquipmentsEventsService {
         plantEquipmentEvent: plantsEquipmentsEvent,
       });
 
-    Logger.log('PlantEquipmentsEventsImagesService#createForEvent', {
+    Logger.log('CalendarEventImageService#createForEvent', {
       plantEquipmentsEventsImage,
     });
 
@@ -248,7 +248,7 @@ export class PlantsEquipmentsEventsService {
       id,
     );
 
-    Logger.log('PlantEquipmentsEventsImagesService#deleteById', {
+    Logger.log('CalendarEventImageService#deleteById', {
       affected: deleteResult.affected,
     });
 

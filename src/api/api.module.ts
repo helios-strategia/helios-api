@@ -18,6 +18,7 @@ import { AscmeModule } from '@/api/ascme/ascme.module';
 import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-status-history.module';
 import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plants-equipments-events.module';
 import { PlantEquipmentsEventsImagesModule } from '@/api/plant-equipments-events-images/plant-equipments-events-images.module';
+import { CalendarEventPauseModule } from "@/api/calendar-event-pause/calendar-event-pause.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PlantEquipmentsEventsImagesModule } from '@/api/plant-equipments-events
     RefreshTokenModule,
     ModelFileModule,
     CalendarEventModule,
+    CalendarEventPauseModule,
     PlantDocumentModule,
     SourcePointModule,
     PositionModule,
@@ -49,6 +51,7 @@ import { PlantEquipmentsEventsImagesModule } from '@/api/plant-equipments-events
     RefreshTokenModule,
     ModelFileModule,
     CalendarEventModule,
+    CalendarEventPauseModule,
     PlantDocumentModule,
     SourcePointModule,
     PositionModule,

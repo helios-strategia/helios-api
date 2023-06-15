@@ -1,17 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PlantEquipmentsEventsImagesRepository } from '@/api/plant-equipments-events-images/plant-equipments-events-images.repository';
+
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 import { MemoryStoredFile } from 'nestjs-form-data';
-import { PlantEquipmentsEventsImagesResponseDto } from '@/api/plant-equipments-events-images/dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { PlantEquipmentsEventsImages } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { CalendarEventImageRepository } from "@/api/calendar-event-images/calendar-event-image.repository";
+import { CalendarEvent } from "@/api/calendar-event/calendar-event.entity";
+import { CalendarEventImage } from "@/api/calendar-event-images/calendar-event-image.entity";
+import { CalendarEventImageResponseDto } from "@/api/calendar-event-images/dto";
 
 @Injectable()
-export class PlantEquipmentsEventsImagesService {
-  @Inject(PlantEquipmentsEventsImagesRepository)
-  private readonly plantEquipmentsEventsImagesRepository: PlantEquipmentsEventsImagesRepository;
+export class CalendarEventImageService {
+  @Inject(CalendarEventImageRepository)
+  private readonly calendarEventImageRepository: CalendarEventImageRepository;
   @Inject(MinioFileService)
   private readonly fileService: MinioFileService;
   @InjectMapper()
@@ -20,25 +21,25 @@ export class PlantEquipmentsEventsImagesService {
   public async create({
     url,
     name,
-    plantEquipmentEvent,
+    calendarEvent,
   }: {
     url: string;
     name: string;
-    plantEquipmentEvent: PlantsEquipmentsEvents;
+    calendarEvent: CalendarEvent;
   }) {
-    return this.plantEquipmentsEventsImagesRepository.save({
+    return this.calendarEventImageRepository.save({
       url,
       name,
-      plantEquipmentEvent,
+      calendarEvent,
     });
   }
 
   public async bulkCreate(...images: MemoryStoredFile[]) {
-    const plantEquipmentsEventsImages = await Promise.all(
+    const imagesSaved = await Promise.all(
       images.map(async (image) => {
         const url = await this.fileService.upload(image);
 
-        return this.plantEquipmentsEventsImagesRepository.save(
+        return this.calendarEventImageRepository.save(
           {
             url,
             name: image.originalName,
@@ -49,19 +50,19 @@ export class PlantEquipmentsEventsImagesService {
     );
 
     Logger.log('CalendarEventImageService#bulkCreate', {
-      plantEquipmentsEventsImages,
+      imagesSaved,
     });
 
     return this.classMapper.mapArray(
-      plantEquipmentsEventsImages,
-      PlantEquipmentsEventsImages,
-      PlantEquipmentsEventsImagesResponseDto,
+      imagesSaved,
+      CalendarEventImage,
+      CalendarEventImageResponseDto,
     );
   }
 
   public async delete(id: number) {
     const deleteResult =
-      await this.plantEquipmentsEventsImagesRepository.delete({ id });
+      await this.calendarEventImageRepository.delete({ id });
 
     Logger.log('CalendarEventImageService#delete', {
       affected: deleteResult.affected,
@@ -71,13 +72,13 @@ export class PlantEquipmentsEventsImagesService {
   }
 
   public async findById(id: number) {
-    return this.plantEquipmentsEventsImagesRepository.findOne({
+    return this.calendarEventImageRepository.findOne({
       where: { id },
     });
   }
 
   public async findByName(imageName: string) {
-    return this.plantEquipmentsEventsImagesRepository.findOne({
+    return this.calendarEventImageRepository.findOne({
       where: { name: imageName },
     });
   }

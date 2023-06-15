@@ -1,43 +1,61 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from '../base-entity/base.entity';
 import { Plant } from '../plant/plant.entity';
+import { CalendarEventType } from '@/types/calendar-event'
+import { CalendarEventPause } from "@/api/calendar-event-pause/calendar-event-pause.entity";
+import { AutoMap } from "@automapper/classes";
+import { CalendarEventImage } from "@/api/calendar-event-images/calendar-event-image.entity";
 
-@Index('plant_id_index', ['plant'], { unique: true })
+@Index('plant_id_index', ['plant'], { unique: false })
 @Entity('calendar_event', { schema: 'public' })
 export class CalendarEvent extends BaseEntity {
-  @Column('boolean', { name: 'all_day', nullable: true })
-  allDay: boolean | null;
-
-  @Column('character varying', {
+  @AutoMap()
+  @Column('enum', {
     name: 'calendar_event_type',
-    nullable: true,
-    length: 255,
+    enum: CalendarEventType,
+    default: CalendarEventType.PlannedWork
   })
-  calendarEventType: string | null;
+  public readonly calendarEventType: CalendarEventType;
 
-  @Column('character varying', { name: 'color', nullable: true, length: 255 })
-  color: string | null;
-
+  @AutoMap()
   @Column('character varying', {
-    name: 'description',
     nullable: true,
-    length: 255,
+    length: 1024,
   })
-  description: string | null;
+  public readonly description: string | null;
 
-  @Column('timestamp without time zone', { name: 'end_date', nullable: true })
-  endDate: Date | null;
+  @AutoMap()
+  @Column('timestamp with time zone', { name: 'end_date', nullable: false })
+  public readonly endDate: Date;
 
-  @Column('timestamp without time zone', { name: 'start_date', nullable: true })
-  startDate: Date | null;
+  @AutoMap()
+  @Column('timestamp with time zone', { name: 'start_date', nullable: false })
+  public readonly startDate: Date;
 
+  @AutoMap()
   @Column('character varying', { name: 'title', nullable: true, length: 255 })
-  title: string | null;
+  public readonly title: string;
 
+  @AutoMap(() => Plant)
   @ManyToOne(() => Plant, (plant) => plant.calendarEvents, {
-    onDelete: 'SET NULL',
+    onDelete: 'NO ACTION',
     createForeignKeyConstraints: false,
   })
   @JoinColumn([{ name: 'plant_id', referencedColumnName: 'id' }])
-  plant: Plant;
+  public readonly plant: Plant;
+
+  @AutoMap(() => [CalendarEventPause])
+  @OneToMany(() => CalendarEventPause,
+    (calendarEventPause) => calendarEventPause.calendarEvent,
+    {
+      createForeignKeyConstraints: false,
+      onDelete: 'NO ACTION'
+    }
+  )
+  public readonly pauses: CalendarEventPause[];
+
+  @AutoMap(() => [CalendarEventImage])
+  @OneToMany(() => CalendarEventImage,
+    (calendarEventImage) => calendarEventImage.calendarEvent)
+  public readonly images: CalendarEventImage[]
 }

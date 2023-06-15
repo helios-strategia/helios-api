@@ -36,7 +36,7 @@ export class PlantsEquipmentsEventsCreateRequestDto
   @IsOptional()
   @IsFiles()
   @HasMimeType(['image/jpeg', 'image/png'], { each: true })
-  @MaxFileSize(15e6, { each: true })
+  @MaxFileSize(10e6, { each: true })
   @ArrayMaxSize(15)
   public readonly images?: MemoryStoredFile[];
 

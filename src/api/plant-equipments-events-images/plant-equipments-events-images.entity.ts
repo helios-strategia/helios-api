@@ -1,28 +1,11 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '@/api/base-entity/base.entity';
+import { Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
-import { AutoMap } from '@automapper/classes';
+import { BaseImageEntity } from "@/api/base-image-entity/base-image.entity";
 
 @Entity({ name: 'plants_equipments_events_images' })
 @Index(['url'], { unique: false })
 @Index(['name'], { unique: false })
-export class PlantEquipmentsEventsImages extends BaseEntity {
-  @AutoMap()
-  @Column({
-    name: 'url',
-    type: 'varchar',
-    nullable: false,
-  })
-  public readonly url: string;
-
-  @AutoMap()
-  @Column({
-    name: 'name',
-    type: 'text',
-    nullable: true,
-  })
-  public readonly name: string;
-
+export class PlantEquipmentsEventsImages extends BaseImageEntity {
   @ManyToOne(
     () => PlantsEquipmentsEvents,
     (plantEquipmentEvent) => plantEquipmentEvent.plantEquipmentsEventsImages,
