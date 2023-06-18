@@ -5,9 +5,16 @@ import { Model30817Module } from '@/api/model-30817/model-30817.module';
 import { Model30917Module } from '@/api/model-30917/model-30917.module';
 import { Model30818Module } from '@/api/model-30818/model-30818.module';
 import { PlantModule } from '@/api/plant/plant.module';
+import { RequestContextModule } from '@/request-context/request-context.module';
 
 @Module({
-  imports: [Model30817Module, Model30917Module, Model30818Module, PlantModule],
+  imports: [
+    Model30817Module,
+    Model30917Module,
+    Model30818Module,
+    PlantModule,
+    RequestContextModule,
+  ],
   controllers: [AscmeController],
   providers: [AscmeService],
 })

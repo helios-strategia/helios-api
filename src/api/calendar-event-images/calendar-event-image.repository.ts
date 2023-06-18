@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { CalendarEventImage } from "@/api/calendar-event-images/calendar-event-image.entity";
+import { CalendarEventImage } from '@/api/calendar-event-images/calendar-event-image.entity';
 
 @Injectable()
 export class CalendarEventImageRepository extends Repository<CalendarEventImage> {

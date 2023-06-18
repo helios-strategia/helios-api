@@ -60,8 +60,6 @@ services:
     entrypoint: /bin/sh
     stdin_open: true
     tty: true
-    ports:
-      - "9000:9000"
 
 volumes:
   db_data:

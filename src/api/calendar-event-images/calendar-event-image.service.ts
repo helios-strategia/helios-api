@@ -4,10 +4,10 @@ import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { CalendarEventImageRepository } from "@/api/calendar-event-images/calendar-event-image.repository";
-import { CalendarEvent } from "@/api/calendar-event/calendar-event.entity";
-import { CalendarEventImage } from "@/api/calendar-event-images/calendar-event-image.entity";
-import { CalendarEventImageResponseDto } from "@/api/calendar-event-images/dto";
+import { CalendarEventImageRepository } from '@/api/calendar-event-images/calendar-event-image.repository';
+import { CalendarEvent } from '@/api/calendar-event/calendar-event.entity';
+import { CalendarEventImage } from '@/api/calendar-event-images/calendar-event-image.entity';
+import { CalendarEventImageResponseDto } from '@/api/calendar-event-images/dto';
 
 @Injectable()
 export class CalendarEventImageService {
@@ -61,8 +61,7 @@ export class CalendarEventImageService {
   }
 
   public async delete(id: number) {
-    const deleteResult =
-      await this.calendarEventImageRepository.delete({ id });
+    const deleteResult = await this.calendarEventImageRepository.delete({ id });
 
     Logger.log('CalendarEventImageService#delete', {
       affected: deleteResult.affected,

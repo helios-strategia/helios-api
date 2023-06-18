@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { SourcePoint } from '../source-point/source-point.entity';
 import { BaseEntity } from '../base-entity/base.entity';
-import { Model30917Channel } from '@/api/model-30917/model-30917-channel.enum';
+import { Model30917Channel } from '@/types/model-30917';
 
 @Entity('model_30917', { schema: 'public' })
 export class Model_30917 extends BaseEntity {

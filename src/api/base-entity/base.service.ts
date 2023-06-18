@@ -1,4 +1,4 @@
-import { ObjectLiteral } from "@/types/common";
+import { ObjectLiteral } from '@/types/common';
 
 export abstract class BaseService<
   TEntity extends ObjectLiteral,

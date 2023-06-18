@@ -1,6 +1,6 @@
 import { Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
-import { BaseImageEntity } from "@/api/base-image-entity/base-image.entity";
+import { BaseImageEntity } from '@/api/base-image-entity/base-image.entity';
 
 @Entity({ name: 'plants_equipments_events_images' })
 @Index(['url'], { unique: false })

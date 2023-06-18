@@ -16,6 +16,7 @@ import { DbConflictErrorFilter } from '@/filter/db-conflict-error.filter';
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(loggerOptions),
+    cors: true,
   });
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('http.port');

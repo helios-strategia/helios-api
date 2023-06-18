@@ -29,8 +29,8 @@ export class SourcePoint extends BaseEntity {
   })
   voltageTransformerCoefficient: number | null;
 
-  @Column('boolean', { name: 'is_commercial', nullable: true })
-  isCommercial: boolean | null;
+  @Column('boolean', { name: 'is_commercial', nullable: true, default: false })
+  isCommercial: boolean;
 
   @Exclude()
   @OneToMany(() => Model_30817, (model_30817) => model_30817.sourcePoint)

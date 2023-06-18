@@ -7,11 +7,17 @@ import {
   IsOptional,
   IsPositive,
 } from 'class-validator';
-import { Model30917Channel } from '@/api/model-30917/model-30917-channel.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
+import {
+  DaysSumByChannelRequestDto as DaysSumByChannelRequestDtoType,
+  DayKvtPerHalfHourByChannelRequestDto as DayKvtPerHalfHourByChannelRequestDtoType,
+} from '@/types/ascme';
+import { Model30917Channel } from '@/types/model-30917';
 
-export class DaySumByChannelRequestDto {
+export class DayKvtPerHalfHourByChannelRequestDto
+  implements DayKvtPerHalfHourByChannelRequestDtoType
+{
   @ApiProperty()
   @IsNumber()
   @IsPositive()
@@ -45,7 +51,9 @@ export class DaySumByChannelRequestDto {
   public readonly excludeSourcePoints?: number[];
 }
 
-export class DaysSumByChannelRequestDto {
+export class DaysSumByChannelRequestDto
+  implements DaysSumByChannelRequestDtoType
+{
   @ApiProperty()
   @IsNumber()
   @IsPositive()
@@ -66,12 +74,18 @@ export class DaysSumByChannelRequestDto {
   })
   public readonly channels: Model30917Channel[];
 
-  @ApiProperty()
+  @ApiProperty({
+    type: 'string',
+    format: 'date-time',
+  })
   @IsDateString()
   public readonly dayStart: string;
 
   @ApiProperty()
-  @IsDateString()
+  @IsDateString({
+    type: 'string',
+    format: 'date-time',
+  })
   public readonly dayEnd: string;
 
   @ApiProperty({

@@ -1,26 +1,34 @@
 import {
   CalendarEventCreateRequestDto as CalendarEventCreateRequestDtoType,
-  CalendarEventType
-} from "@/types/calendar-event";
-import { HasMimeType, IsFiles, MaxFileSize, MemoryStoredFile } from "nestjs-form-data";
+  CalendarEventType,
+} from '@/types/calendar-event';
+import {
+  HasMimeType,
+  IsFiles,
+  MaxFileSize,
+  MemoryStoredFile,
+} from 'nestjs-form-data';
 import {
   ArrayMaxSize,
   IsDateString,
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional, IsPositive,
+  IsOptional,
+  IsPositive,
   IsString,
-  MaxLength
-} from "class-validator";
-import { enumValidationMessage } from "@/utils";
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+  MaxLength,
+} from 'class-validator';
+import { enumValidationMessage } from '@/utils';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
-export class CalendarEventCreateRequestDto implements CalendarEventCreateRequestDtoType {
+export class CalendarEventCreateRequestDto
+  implements CalendarEventCreateRequestDtoType
+{
   @IsNotEmpty()
   @IsEnum(CalendarEventType, {
-    message: enumValidationMessage('calendarEventType', CalendarEventType)
+    message: enumValidationMessage('calendarEventType', CalendarEventType),
   })
   readonly calendarEventType: CalendarEventType;
 

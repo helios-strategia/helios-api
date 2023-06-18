@@ -8,6 +8,10 @@ import * as BaseEntityTypes from './base-entity';
 import * as PlantEquipmentsEventsTypes from './plant-equipments-events';
 import * as EventsTypes from './events';
 import * as PlantEquipmentsEventsImagesTypes from './plant-equipments-events-images';
+import * as BaseImageEntityTypes from './base-image-entity';
+import * as CalendarEventPauseTypes from './calendar-event-pause';
+import * as AscmeTypes from './ascme';
+import * as Model30917Types from './model-30917';
 
 export {
   PlantStatusHistoryTypes,
@@ -20,4 +24,8 @@ export {
   PlantEquipmentsEventsTypes,
   EventsTypes,
   PlantEquipmentsEventsImagesTypes,
+  BaseImageEntityTypes,
+  CalendarEventPauseTypes,
+  AscmeTypes,
+  Model30917Types,
 };

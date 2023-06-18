@@ -1,10 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Model30917Repository } from '@/api/model-30917/model-30917.repository';
-import { Model30917Channel } from '@/api/model-30917/model-30917-channel.enum';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  GetDayKvtPerHalfHourByChannelResult,
+  GetDaysSumByChannelResult,
+  Model30917Repository,
+} from '@/api/model-30917/model-30917.repository';
 import { PlantService } from '@/api/plant/plant.service';
 import { NoDataFoundError } from '@/error/no-data-found.error';
 import { Plant } from '@/api/plant/plant.entity';
 import { zip } from 'lodash';
+import { RequestContextService } from '@/request-context/request-context.service';
+import { UserRole } from '@/types/user';
+import {
+  DayKvtPerHalfHourByChannelResponseDto,
+  DaysSumByChannelResponseDto,
+} from '@/types/ascme';
+import { Model30917Channel } from '@/types/model-30917';
 
 @Injectable()
 export class AscmeService {
@@ -12,34 +22,8 @@ export class AscmeService {
   private readonly model30917Repository: Model30917Repository;
   @Inject()
   private readonly plantService: PlantService;
-
-  public async getDaySumByChannel({
-    plantId,
-    channels,
-    day,
-    excludeSourcePoints,
-  }: {
-    plantId: number;
-    channels: Model30917Channel[];
-    day: string;
-    excludeSourcePoints?: number[];
-  }) {
-    if (!(await this.plantService.isPresent(plantId))) {
-      throw new NoDataFoundError(Plant, plantId);
-    }
-
-    return this.model30917Repository
-      .getDaySumByChannel(plantId, channels, day, excludeSourcePoints)
-      .then((raws) =>
-        raws.reduce(
-          (acc, val) => ({
-            ...acc,
-            [val.m_channel]: val.sum,
-          }),
-          {},
-        ),
-      );
-  }
+  @Inject()
+  private readonly requestContextService: RequestContextService;
 
   public async getDaysSumByChannel({
     plantId,
@@ -58,23 +42,19 @@ export class AscmeService {
       throw new NoDataFoundError(Plant, plantId);
     }
 
-    return this.model30917Repository
-      .getDaysSumByChannel(
-        plantId,
-        channels,
-        dayStart,
-        dayEnd,
-        excludeSourcePoints,
-      )
-      .then((raws) =>
-        raws.reduce(
-          (acc, val) => ({
-            ...acc,
-            [val.m_channel]: val.sum,
-          }),
-          {},
+    return this.fetchByRole<DaysSumByChannelResponseDto>(
+      async () =>
+        this.mapRowsToSumByChannel(
+          await this.model30917Repository.getDaysSumByChannel(
+            plantId,
+            channels,
+            dayStart,
+            dayEnd,
+            excludeSourcePoints,
+          ),
         ),
-      );
+      plantId,
+    );
   }
 
   public async getDayKvtPerHalfHourByChannel({
@@ -92,29 +72,69 @@ export class AscmeService {
       throw new NoDataFoundError(Plant, plantId);
     }
 
-    return this.model30917Repository
-      .getDayKvtPerHalfHourByChannel(
-        plantId,
-        channels,
-        day,
-        excludeSourcePoints,
-      )
-      .then(
-        (
-          rows: { m_channel: Model30917Channel; kvt_per_half_hour: number[] }[],
-        ) => {
-          return rows.reduce(
-            (acc, val) => ({
-              ...acc,
-              [val.m_channel]: acc[val.m_channel]
-                ? zip(acc[val.m_channel], val.kvt_per_half_hour).map(
-                    ([a, b]) => a + b,
-                  )
-                : val.kvt_per_half_hour,
-            }),
-            {} as Record<Model30917Channel, number[]>,
-          );
+    return this.fetchByRole<DayKvtPerHalfHourByChannelResponseDto>(
+      async () =>
+        this.mapRowsToSumByChannelAndSourcePoint(
+          await this.model30917Repository.getDayKvtPerHalfHourByChannel(
+            plantId,
+            channels,
+            day,
+            excludeSourcePoints,
+          ),
+        ),
+      plantId,
+    );
+  }
+
+  private async fetchByRole<T>(
+    fetchCallback: () => Promise<T>,
+    plantId: number,
+  ) {
+    switch (this.requestContextService.getUser.role) {
+      case UserRole.ADMIN:
+        return fetchCallback();
+      case UserRole.CLIENT:
+        const userPlantIds = await this.plantService
+          .findAllByUserId(this.requestContextService.getUserId)
+          .then((plants) => plants.map(({ id }) => id));
+
+        if (!userPlantIds.includes(plantId)) {
+          throw new ForbiddenException();
+        }
+
+        return fetchCallback();
+      default:
+        throw new Error('Mismatch role');
+    }
+  }
+
+  private mapRowsToSumByChannelAndSourcePoint(
+    rows: GetDayKvtPerHalfHourByChannelResult,
+  ) {
+    return rows.reduce(
+      (result, val) => ({
+        ...result,
+        [val.m_channel]: {
+          ...result[val.m_channel],
+          sum: result?.[val.m_channel]?.['sum']
+            ? zip(result?.[val.m_channel]?.['sum'], val.kvt_per_half_hour).map(
+                ([a, b]: [number, number]) => a + b,
+              )
+            : val.kvt_per_half_hour,
+          [val.source_point_code]: val.kvt_per_half_hour,
         },
-      );
+      }),
+      {} as DayKvtPerHalfHourByChannelResponseDto,
+    );
+  }
+
+  private mapRowsToSumByChannel(rows: GetDaysSumByChannelResult) {
+    return rows.reduce(
+      (acc, val) => ({
+        ...acc,
+        [val.m_channel]: val.sum,
+      }),
+      {} as DaysSumByChannelResponseDto,
+    );
   }
 }

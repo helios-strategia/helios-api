@@ -8,10 +8,10 @@ import {
 } from '@nestjs/common';
 import {
   DaysSumByChannelRequestDto,
-  DaySumByChannelRequestDto,
+  DayKvtPerHalfHourByChannelRequestDto,
 } from '@/api/ascme/ascme.dto';
 import { AscmeService } from '@/api/ascme/ascme.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
 import { RolesGuard } from '@/api/auth/roles.guard';
 
@@ -24,14 +24,6 @@ export class AscmeController {
   private readonly ascmeService: AscmeService;
 
   @HttpCode(200)
-  @Post('/daySumByChannel')
-  public getDaySumByChannel(
-    @Body() daySumByChannelRequestDto: DaySumByChannelRequestDto,
-  ) {
-    return this.ascmeService.getDaySumByChannel(daySumByChannelRequestDto);
-  }
-
-  @HttpCode(200)
   @Post('/daysSumByChannel')
   public getDaysSumByChannel(
     @Body() daysSumByChannelRequestDto: DaysSumByChannelRequestDto,
@@ -42,7 +34,8 @@ export class AscmeController {
   @HttpCode(200)
   @Post('/dayKvtPerHalfHourByChannel')
   public getDayKvtPerHalfHourByChannel(
-    @Body() dayKvtPerHalfHourByChannelRequest: DaySumByChannelRequestDto,
+    @Body()
+    dayKvtPerHalfHourByChannelRequest: DayKvtPerHalfHourByChannelRequestDto,
   ) {
     return this.ascmeService.getDayKvtPerHalfHourByChannel(
       dayKvtPerHalfHourByChannelRequest,

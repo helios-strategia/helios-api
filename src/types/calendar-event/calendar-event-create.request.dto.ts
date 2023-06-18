@@ -1,5 +1,5 @@
-import { CalendarEventType } from "@/types/calendar-event/calendar-event-type.enum";
-import { MemoryStoredFile } from "nestjs-form-data";
+import { CalendarEventType } from '@/types/calendar-event/calendar-event-type.enum';
+import { MemoryStoredFile } from 'nestjs-form-data';
 
 export interface CalendarEventCreateRequestDto {
   readonly calendarEventType: CalendarEventType;
@@ -8,5 +8,5 @@ export interface CalendarEventCreateRequestDto {
   readonly title: string;
   readonly plantId: number;
   readonly description?: string;
-  readonly images?: MemoryStoredFile[]
+  readonly images?: MemoryStoredFile[];
 }

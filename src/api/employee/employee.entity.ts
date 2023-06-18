@@ -21,11 +21,11 @@ export class Employee extends BaseEntity {
   })
   avatarUrl: string | null;
 
-  @Column('text', { name: 'name', nullable: true })
-  name: string | null;
+  @Column('text', { name: 'name', nullable: false })
+  name: string;
 
-  @Column('text', { name: 'surname', nullable: true })
-  surname: string | null;
+  @Column('text', { name: 'surname', nullable: false })
+  surname: string;
 
   @Column('text', { name: 'phone', nullable: true })
   phone: string | null;

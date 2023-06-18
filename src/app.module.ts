@@ -11,6 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import * as config from 'config';
 import { EventsModule } from '@/event/events.module';
+import { RequestContextModule } from '@/request-context/request-context.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { EventsModule } from '@/event/events.module';
       delimiter: ':',
     }),
     EventsModule,
+    RequestContextModule,
   ],
 
   controllers: [],

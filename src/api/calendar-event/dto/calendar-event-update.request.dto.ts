@@ -1,21 +1,23 @@
 import {
   CalendarEventUpdateRequestDto as CalendarEventUpdateRequestDtoType,
-  CalendarEventType
-} from "@/types/calendar-event";
+  CalendarEventType,
+} from '@/types/calendar-event';
 import {
   IsDateString,
   IsEnum,
   IsOptional,
   IsString,
-  MaxLength
-} from "class-validator";
-import { enumValidationMessage } from "@/utils";
-import { ApiProperty } from "@nestjs/swagger";
+  MaxLength,
+} from 'class-validator';
+import { enumValidationMessage } from '@/utils';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class CalendarEventUpdateRequestDto implements CalendarEventUpdateRequestDtoType {
+export class CalendarEventUpdateRequestDto
+  implements CalendarEventUpdateRequestDtoType
+{
   @IsOptional()
   @IsEnum(CalendarEventType, {
-    message: enumValidationMessage('calendarEventType', CalendarEventType)
+    message: enumValidationMessage('calendarEventType', CalendarEventType),
   })
   readonly calendarEventType?: CalendarEventType;
 

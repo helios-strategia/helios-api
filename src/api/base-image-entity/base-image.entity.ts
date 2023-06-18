@@ -1,6 +1,6 @@
-import { BaseEntity } from "@/api/base-entity/base.entity";
-import { AutoMap } from "@automapper/classes";
-import { Column } from "typeorm";
+import { BaseEntity } from '@/api/base-entity/base.entity';
+import { AutoMap } from '@automapper/classes';
+import { Column } from 'typeorm';
 
 export abstract class BaseImageEntity extends BaseEntity {
   @AutoMap()
