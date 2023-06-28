@@ -19,6 +19,8 @@ import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-statu
 import { PlantsEquipmentsEventsModule } from '@/api/plant-equipments-events/plants-equipments-events.module';
 import { PlantEquipmentsEventsImagesModule } from '@/api/plant-equipments-events-images/plant-equipments-events-images.module';
 import { CalendarEventPauseModule } from '@/api/calendar-event-pause/calendar-event-pause.module';
+import { GenerationTariffModule } from './generation-tariff/generation-tariff.module';
+import { PlantImagesModule } from './plant-images/plant-images.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { CalendarEventPauseModule } from '@/api/calendar-event-pause/calendar-ev
     PlantStatusHistoryModule,
     PlantsEquipmentsEventsModule,
     PlantEquipmentsEventsImagesModule,
+    GenerationTariffModule,
+    PlantImagesModule,
   ],
   exports: [
     ServiceModule,

@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Plant } from '../plant/plant.entity';
 import { BaseEntity } from '../base-entity/base.entity';
-import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 import { AutoMap } from '@automapper/classes';
+import { PlantDocumentType } from '@/types/plant-document';
 
 @Entity('plant_documents', { schema: 'public' })
 export class PlantDocument extends BaseEntity {

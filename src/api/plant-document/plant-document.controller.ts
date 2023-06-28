@@ -20,7 +20,7 @@ import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
 import { RolesGuard } from '@/api/auth/roles.guard';
 import { Roles } from '@/api/auth/roles.decorator';
 import { FormDataRequest } from 'nestjs-form-data';
-import { PlantDocumentCreateRequestDto } from '@/api/plant-document/plant-document.dto';
+import { PlantDocumentCreateRequestDto } from '@/api/plant-document/plant-document-create.request.dto';
 import { PlantService } from '@/api/plant/plant.service';
 import { UserRole } from '@/types/user';
 import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';

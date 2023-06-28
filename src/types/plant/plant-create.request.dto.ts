@@ -21,4 +21,9 @@ export interface PlantCreateRequestDto {
   readonly contactPersonName?: string;
   readonly contactPersonPhone?: string;
   readonly contactPersonEmail?: string;
+  readonly address?: string;
+  readonly VATNumber?: number;
+  readonly images?: MemoryStoredFile[];
+  readonly taxStatement?: MemoryStoredFile;
+  readonly mainPlan?: MemoryStoredFile;
 }

@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
-import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 import { IsFile, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
+import { PlantDocumentType } from '@/types/plant-document';
+import { enumValidationMessage } from '@/utils';
+import { PlantDocumentCreateRequestDto as PlantDocumentCreateRequestDtoType } from '@/types/plant-document';
 
-export class PlantDocumentCreateRequestDto {
+export class PlantDocumentCreateRequestDto
+  implements PlantDocumentCreateRequestDtoType
+{
   @ApiProperty({ enum: PlantDocumentType })
   @IsString()
   @IsEnum(PlantDocumentType, {
-    message: `document type must one of ${Object.values(PlantDocumentType).join(
-      ', ',
-    )}`,
+    message: enumValidationMessage('documentType', PlantDocumentType),
   })
   public readonly documentType: PlantDocumentType;
 

@@ -66,7 +66,7 @@ export class MinioFileService implements FileService {
     switch (endPoint) {
       case 'localhost':
       case 'storage':
-        return `localhost:9010/${bucketName}/${fileName}`;
+        return `http://localhost:9010/${bucketName}/${fileName}`;
       default:
         return `${endPoint}:${this.configService.get<string>(
           'file_storage.minio.port',

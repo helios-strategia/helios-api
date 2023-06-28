@@ -3,6 +3,9 @@ import { PlantStatus } from '@/types/plant';
 import { PlantStatusHistoryResponseDto } from '@/types/plant-status-history';
 import { PlantProductivityDeclineRate } from '@/types/plant/plant-productivity-decline-rate';
 import { UserResponseDto } from '@/types/user';
+import { PlantDocumentResponseDto } from '@/types/plant-document';
+import { CalendarEventResponseDto } from '@/types/calendar-event';
+import { PlantImagesResponseDto } from '@/types/plant-images';
 
 export interface PlantResponseDto extends BaseEntity {
   readonly ascmePlantCode: string;
@@ -21,4 +24,11 @@ export interface PlantResponseDto extends BaseEntity {
   readonly plantProductivityDeclineRate: PlantProductivityDeclineRate | null;
   readonly plantStatusHistory?: PlantStatusHistoryResponseDto[];
   readonly user?: UserResponseDto;
+  readonly documents?: PlantDocumentResponseDto[];
+  readonly calendarEvents?: CalendarEventResponseDto[];
+  readonly address?: string;
+  readonly VATNumber?: number;
+  readonly taxStatementUrl?: string;
+  readonly mainPlanUrl?: string;
+  readonly images?: PlantImagesResponseDto[];
 }

@@ -10,7 +10,7 @@ import { PlantStatusHistoryResponseDto } from '@/api/plant-status-history/dto';
 import { BaseEntityResponseDto } from '@/api/base-entity/base-entity.response.dto';
 import { UserResponseDto } from '@/api/user/dto/user.response.dto';
 import { PlantDocumentResponseDto } from '@/api/plant-document/plant-document.response.dto';
-import { PlantDocument } from '@/api/plant-document/plant-document.entity';
+import { PlantImagesResponseDto } from '@/api/plant-images/dto/plant-images.response.dto';
 
 export class PlantResponseDto
   extends BaseEntityResponseDto
@@ -72,4 +72,19 @@ export class PlantResponseDto
 
   @AutoMap()
   public readonly contactPersonEmail: string | null;
+
+  @AutoMap(() => [PlantImagesResponseDto])
+  public readonly images?: PlantImagesResponseDto[];
+
+  @AutoMap()
+  public readonly address: string | null;
+
+  @AutoMap()
+  public readonly VATNumber?: number;
+
+  @AutoMap()
+  public readonly mainPlanUrl: string | null;
+
+  @AutoMap()
+  public readonly taxStatementUrl: string | null;
 }

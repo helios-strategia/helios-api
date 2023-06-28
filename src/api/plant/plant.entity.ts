@@ -18,8 +18,11 @@ import { PlantEquipments } from '@/api/plant-equipments/plant-equipments.entity'
 import { PlantStatusHistory } from '@/api/plant-status-history/plant-status-history.entity';
 import { PlantProductivityDeclineRate } from '@/types/plant';
 import { AutoMap } from '@automapper/classes';
+import { GenerationTariff } from '@/api/generation-tariff/generation-tariff.entity';
+import { PlantImages } from '@/api/plant-images/plant-images.entity';
 
 @Index(['ascmePlantCode'], { unique: true })
+@Index(['name'], { unique: true })
 @Entity('plants')
 export class Plant extends BaseEntity {
   @AutoMap()
@@ -54,11 +57,43 @@ export class Plant extends BaseEntity {
   public readonly exploitationStart: Date | null;
 
   @AutoMap()
+  @Column('text', {
+    nullable: true,
+  })
+  public readonly address: string | null;
+
+  @AutoMap()
+  @Column('text', {
+    nullable: true,
+    name: 'main_plan_url',
+  })
+  public readonly mainPlanUrl: string | null;
+
+  @AutoMap()
+  @Column('text', {
+    nullable: true,
+    name: 'tax_statement_url',
+  })
+  public readonly taxStatementUrl: string | null;
+
+  @AutoMap(() => Number)
+  @Column('bigint', {
+    nullable: true,
+    name: 'vat_number',
+  })
+  public readonly VATNumber: number | null;
+
+  @AutoMap()
   @Column('text', { name: 'name', nullable: false })
   public readonly name: string;
 
   @AutoMap()
-  @Column('text', { name: 'status', nullable: false })
+  @Column('enum', {
+    name: 'status',
+    nullable: true,
+    enum: PlantStatus,
+    default: PlantStatus.ACTIVE,
+  })
   public readonly status: PlantStatus;
 
   @AutoMap()
@@ -158,4 +193,15 @@ export class Plant extends BaseEntity {
     nullable: true,
   })
   public readonly contactPersonEmail: string | null;
+
+  @AutoMap(() => [GenerationTariff])
+  @OneToMany(
+    () => GenerationTariff,
+    (generationTariff) => generationTariff.plant,
+  )
+  public readonly generationTariffs: GenerationTariff[];
+
+  @AutoMap(() => [PlantImages])
+  @OneToMany(() => PlantImages, (plantImage) => plantImage.plant)
+  public readonly images: PlantImages[];
 }

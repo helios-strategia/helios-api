@@ -21,3 +21,10 @@ export interface RequestUser {
 export interface ObjectLiteral {
   [key: string]: any;
 }
+
+export enum Quarter {
+  First = 1,
+  Second = 2,
+  Third = 3,
+  Four = 4,
+}

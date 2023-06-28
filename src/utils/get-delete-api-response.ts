@@ -1,6 +1,6 @@
-export const getDeleteApiResponse = <T extends Object>(
+export const getDeleteApiResponse = <T extends Function>(
   entity: T,
   id: number,
 ) => {
-  return { message: `${entity.constructor.name} [${id}] successfully removed` };
+  return { message: `${entity.name} [${id}] successfully removed` };
 };

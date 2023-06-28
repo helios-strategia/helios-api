@@ -2,11 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PlantDocumentRepository } from '@/api/plant-document/plant-document.repository';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
-import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { PlantDocumentResponseDto } from '@/api/plant-document/plant-document.response.dto';
+import { PlantDocumentType } from '@/types/plant-document';
 
 @Injectable()
 export class PlantDocumentService {
@@ -43,7 +43,6 @@ export class PlantDocumentService {
     documentsToCreate: {
       readonly documentType: string;
       readonly file: MemoryStoredFile;
-      readonly plantId?: number;
     }[],
     isTrx = true,
   ) {

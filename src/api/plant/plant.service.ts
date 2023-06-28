@@ -26,13 +26,18 @@ import { getDeleteApiResponse } from '@/utils';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
+import {
+  PlantFilesService,
+  PlantFileTypes,
+} from '@/api/plant/plant-files.service';
+import { PlantDocumentType } from '@/types/plant-document';
 
 @Injectable()
 export class PlantService {
   @Inject(PlantRepository)
   private readonly plantRepository: PlantRepository;
-  @Inject(PlantDocumentService)
-  private readonly documentService: PlantDocumentService;
+  // @Inject(PlantDocumentService)
+  // private readonly documentService: PlantDocumentService;
   @Inject(UserService)
   private readonly userService: UserService;
   @Inject(PlantStatusHistoryService)
@@ -45,12 +50,20 @@ export class PlantService {
   private readonly transactionPerformer: TransactionPerformer;
   @Inject(PlantEquipmentsService)
   private readonly plantEquipmentsService: PlantEquipmentsService;
+  @Inject(PlantFilesService)
+  private readonly plantFilesService: PlantFilesService;
   @InjectMapper()
   private readonly classMapper: Mapper;
 
   public async create(plantCreateRequestDto: PlantCreateRequestDto) {
     Logger.log('PlantService#create', {
-      ...omit(plantCreateRequestDto, 'masterPlan', 'documents'),
+      ...omit(
+        plantCreateRequestDto,
+        'mainPlan',
+        'documents',
+        'taxStatement',
+        'images',
+      ),
       documents: plantCreateRequestDto?.documents?.map(
         ({ originalName, size, mimetype }) => ({
           fileName: originalName,
@@ -66,10 +79,13 @@ export class PlantService {
       documentTypes,
       status,
       plantProductivityDeclineRate,
+      images,
+      taxStatement,
+      mainPlan,
       ...restCreatePayload
     } = plantCreateRequestDto;
 
-    const documentsSaved: PlantDocument[] = [];
+    //const documentsSaved: PlantDocument[] = [];
     const [user, plantWithExistingAscme] = await Promise.all([
       this.userService.findById(userId),
       this.plantRepository.findOne({
@@ -94,30 +110,46 @@ export class PlantService {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.startTransaction();
 
+    let plant: Plant;
+
     try {
-      if (documents?.length) {
-        documentsSaved.push(
-          ...(await this.documentService.createMany(
-            documents.map((doc, i) => ({
-              file: doc,
-              documentType: documentTypes[i],
-            })),
-            false,
-          )),
-        );
+      // if (documents?.length) {
+      //   documentsSaved.push(
+      //     ...(await this.documentService.createMany(
+      //       documents.map((doc, i) => ({
+      //         file: doc,
+      //         documentType: documentTypes[i],
+      //       })),
+      //       false,
+      //     )),
+      //   );
+      //
+      //   Logger.log('PlantService#create documents saved');
+      // }
 
-        Logger.log('PlantService#create documents saved');
-      }
+      const [documentsUpload, imagesUpload, taxStatementUrl, mainPlanUrl] =
+        await this.plantFilesService.upload({
+          [PlantFileTypes.Documents]: documents.map((doc, i) => ({
+            file: doc,
+            documentType: documentTypes[i] as PlantDocumentType,
+          })),
+          [PlantFileTypes.Images]: images,
+          [PlantFileTypes.TaxStatement]: taxStatement,
+          [PlantFileTypes.MainPlan]: mainPlan,
+        });
 
-      const plant = await this.plantRepository.save(
+      plant = await this.plantRepository.save(
         {
-          documents: documentsSaved,
+          documents: documentsUpload,
+          images: imagesUpload,
           user,
           status,
           plantProductivityDeclineRate:
             this.transformArrayPlantDeclineRatesToObj(
               plantProductivityDeclineRate,
             ),
+          taxStatementUrl,
+          mainPlanUrl,
           ...restCreatePayload,
         },
         { transaction: false },
@@ -138,20 +170,6 @@ export class PlantService {
         plantStatusHistory,
         plantEquipments,
       });
-
-      return this.classMapper.map(
-        await this.plantRepository.findOne({
-          where: { id: plant.id },
-          relations: {
-            user: true,
-            documents: true,
-            employees: true,
-            plantStatusHistory: true,
-          },
-        }),
-        Plant,
-        PlantResponseDto,
-      );
     } catch (error) {
       Logger.error('PlantService#create error', {
         error,
@@ -163,6 +181,21 @@ export class PlantService {
     } finally {
       await queryRunner.release();
     }
+
+    return this.classMapper.map(
+      await this.plantRepository.findOne({
+        where: { id: plant.id },
+        relations: {
+          user: true,
+          documents: true,
+          employees: true,
+          plantStatusHistory: true,
+          images: true,
+        },
+      }),
+      Plant,
+      PlantResponseDto,
+    );
   }
 
   public async getById(id: number) {
@@ -193,6 +226,7 @@ export class PlantService {
           documents: true,
           employees: true,
           plantStatusHistory: true,
+          images: true,
         },
       }),
       Plant,
@@ -291,6 +325,7 @@ export class PlantService {
             documents: true,
             employees: true,
             plantStatusHistory: true,
+            images: true,
           },
         }),
         Plant,

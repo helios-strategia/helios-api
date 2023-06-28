@@ -12,6 +12,7 @@ import * as BaseImageEntityTypes from './base-image-entity';
 import * as CalendarEventPauseTypes from './calendar-event-pause';
 import * as AscmeTypes from './ascme';
 import * as Model30917Types from './model-30917';
+import * as GeneraTariffTypes from './generation-tariff';
 
 export {
   PlantStatusHistoryTypes,
@@ -28,4 +29,5 @@ export {
   CalendarEventPauseTypes,
   AscmeTypes,
   Model30917Types,
+  GeneraTariffTypes,
 };

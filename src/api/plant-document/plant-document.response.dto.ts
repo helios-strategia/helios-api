@@ -1,9 +1,13 @@
-import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
 import { PlantResponseDto } from '@/api/plant/dto';
 import { AutoMap } from '@automapper/classes';
 import { BaseEntityResponseDto } from '@/api/base-entity/base-entity.response.dto';
+import { PlantDocumentType } from '@/types/plant-document';
+import { PlantDocumentResponseDto as PlantDocumentResponseDtoType } from '@/types/plant-document';
 
-export class PlantDocumentResponseDto extends BaseEntityResponseDto {
+export class PlantDocumentResponseDto
+  extends BaseEntityResponseDto
+  implements PlantDocumentResponseDtoType
+{
   @AutoMap()
   public readonly documentType: PlantDocumentType;
   @AutoMap()

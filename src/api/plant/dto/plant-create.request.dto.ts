@@ -18,11 +18,17 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { PlantStatus } from '@/types/plant';
-import { stringifyEnumValues } from '@/utils';
-import { IsFiles, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
+import { enumValidationMessage } from '@/utils';
+import {
+  HasMimeType,
+  IsFile,
+  IsFiles,
+  MaxFileSize,
+  MemoryStoredFile,
+} from 'nestjs-form-data';
 import { PlantProductivityDeclineRateRequestDto } from '@/api/plant/dto/plant-productivity-decline-rate.request.dto';
 import { PlantCreateRequestDto as PlantCreateRequestDtoType } from '@/types/plant';
-import { PlantDocumentType } from '@/api/plant-document/plant-document-type.enum';
+import { PlantDocumentType } from '@/types/plant-document';
 
 export class PlantCreateRequestDto implements PlantCreateRequestDtoType {
   @ApiProperty()
@@ -65,7 +71,7 @@ export class PlantCreateRequestDto implements PlantCreateRequestDtoType {
   @ApiProperty({ enum: PlantStatus })
   @IsString()
   @IsEnum(PlantStatus, {
-    message: `status must one of ${stringifyEnumValues(PlantStatus)}`,
+    message: enumValidationMessage('status', PlantStatus),
   })
   public readonly status?: PlantStatus;
 
@@ -102,17 +108,17 @@ export class PlantCreateRequestDto implements PlantCreateRequestDtoType {
   @IsOptional()
   @IsFiles()
   @MaxFileSize(10e6, { each: true })
+  @ArrayMaxSize(15)
   public readonly documents?: MemoryStoredFile[];
 
   @ApiProperty({ isArray: true })
   @IsOptional()
   @IsString({ each: true })
   @IsEnum(PlantDocumentType, {
-    message: `documentType must one of ${stringifyEnumValues(
-      PlantDocumentType,
-    )}`,
+    message: enumValidationMessage('documentTypes', PlantDocumentType),
     each: true,
   })
+  @ArrayMaxSize(15)
   public readonly documentTypes?: string[];
 
   @IsOptional()
@@ -133,4 +139,35 @@ export class PlantCreateRequestDto implements PlantCreateRequestDtoType {
   @IsOptional()
   @IsEmail()
   public readonly contactPersonEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  public readonly address?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  public readonly VATNumber?: number;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsFiles()
+  @MaxFileSize(10e6, { each: true })
+  @HasMimeType(['image/jpeg', 'image/png'], { each: true })
+  @ArrayMaxSize(20)
+  public readonly images?: MemoryStoredFile[];
+
+  @ApiProperty()
+  @IsOptional()
+  @IsFile()
+  @MaxFileSize(20e6)
+  public readonly mainPlan?: MemoryStoredFile;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsFile()
+  @MaxFileSize(20e6)
+  public readonly taxStatement?: MemoryStoredFile;
 }
