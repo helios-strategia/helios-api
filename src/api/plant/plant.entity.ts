@@ -19,7 +19,7 @@ import { PlantStatusHistory } from '@/api/plant-status-history/plant-status-hist
 import { PlantProductivityDeclineRate } from '@/types/plant';
 import { AutoMap } from '@automapper/classes';
 import { GenerationTariff } from '@/api/generation-tariff/generation-tariff.entity';
-import { PlantImages } from '@/api/plant-images/plant-images.entity';
+import { PlantImage } from '@/api/plant-images/plant-images.entity';
 
 @Index(['ascmePlantCode'], { unique: true })
 @Index(['name'], { unique: true })
@@ -201,7 +201,7 @@ export class Plant extends BaseEntity {
   )
   public readonly generationTariffs: GenerationTariff[];
 
-  @AutoMap(() => [PlantImages])
-  @OneToMany(() => PlantImages, (plantImage) => plantImage.plant)
-  public readonly images: PlantImages[];
+  @AutoMap(() => [PlantImage])
+  @OneToMany(() => PlantImage, (plantImage) => plantImage.plant)
+  public readonly images: PlantImage[];
 }

@@ -5,15 +5,18 @@ import { Mapper } from '@automapper/core';
 import { PlantImagesRepository } from '@/api/plant-images/plant-images.repository';
 import { Plant } from '@/api/plant/plant.entity';
 import { MemoryStoredFile } from 'nestjs-form-data';
-import { PlantImages } from '@/api/plant-images/plant-images.entity';
+import { getDeleteApiResponse } from '@/utils';
+import { PlantImage } from '@/api/plant-images/plant-images.entity';
 import { PlantImagesResponseDto } from '@/api/plant-images/dto/plant-images.response.dto';
 
 @Injectable()
 export class PlantImagesService {
   @Inject(PlantImagesRepository)
   private readonly plantImagesRepository: PlantImagesRepository;
+
   @Inject(MinioFileService)
   private readonly fileService: MinioFileService;
+
   @InjectMapper()
   private readonly classMapper: Mapper;
 
@@ -31,6 +34,20 @@ export class PlantImagesService {
       name,
       plant,
     });
+  }
+
+  public async uploadAndCreate(image: MemoryStoredFile, plant: Plant) {
+    const plantImage = await this.plantImagesRepository.save({
+      url: await this.fileService.upload(image),
+      name: image.originalName,
+      plant,
+    });
+
+    Logger.log('PlantImagesService#uploadAndCreate', {
+      plantImage,
+    });
+
+    return this.classMapper.map(plantImage, PlantImage, PlantImagesResponseDto);
   }
 
   public async bulkCreate(...images: MemoryStoredFile[]) {
@@ -62,6 +79,14 @@ export class PlantImagesService {
       affected: deleteResult.affected,
     });
 
-    return deleteResult;
+    return getDeleteApiResponse(PlantImage, id);
+  }
+
+  public async findById(id: number) {
+    return this.classMapper.map(
+      await this.plantImagesRepository.findOne({ where: { id } }),
+      PlantImage,
+      PlantImagesResponseDto,
+    );
   }
 }

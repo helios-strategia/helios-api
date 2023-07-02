@@ -1,5 +1,5 @@
 import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { PlantsEquipmentsEventsRepository } from '@/api/plant-equipments-events/plants-equipments-events.repository';
 import { PlantsEquipmentsEventsCreateRequestDto } from '@/api/plant-equipments-events/dto/plants-equipments-events-create.request.dto';
 import { PlantService } from '@/api/plant/plant.service';
@@ -8,7 +8,6 @@ import { NoDataFoundError } from '@/error/no-data-found.error';
 import { Plant } from '@/api/plant/plant.entity';
 import { MinioFileService } from '@/service/file-serivce/minio-file-service';
 import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
-import { PlantEquipments } from '@/api/plant-equipments/plant-equipments.entity';
 import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
 import { ApiDeleteResponse, RequestUser } from '@/types/common';
 import { UserRole } from '@/types/user';
@@ -23,7 +22,7 @@ import {
   PlantEquipmentsEventsImagesCreateRequestDto,
   PlantEquipmentsEventsImagesResponseDto,
 } from '@/api/plant-equipments-events-images/dto';
-import { PlantEquipmentsEventsImages } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
+import { PlantEquipmentsEventsImage } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
 
 type ValueOrArray<T> = T | T[];
 type MappedType<T, R> = T extends Array<infer U> ? R[] : R;
@@ -54,7 +53,9 @@ export class PlantsEquipmentsEventsService {
       plantsEquipmentsEventsCreateDto: rest,
     });
 
-    const plant = await this.plantService.findById(plantId);
+    const plant = await this.plantService.findByIdOrElseThrowNotFoundError(
+      plantId,
+    );
 
     if (isNil(plant)) {
       throw new NoDataFoundError(Plant, plantId);
@@ -77,7 +78,7 @@ export class PlantsEquipmentsEventsService {
           ? await this.plantEquipmentsEventsImagesService.bulkCreate(...images)
           : null;
 
-        const plantEquipmentsEvent: PlantsEquipmentsEvents =
+        const plantEquipmentsEvent: PlantEquipmentsEvents =
           await this.plantsEquipmentsEventsRepository.save(
             {
               ...rest,
@@ -148,7 +149,7 @@ export class PlantsEquipmentsEventsService {
       ]);
 
       if (isNil(plantsEquipmentsEvent)) {
-        throw new RouteNoDataFoundError(PlantsEquipmentsEvents, id);
+        throw new RouteNoDataFoundError(PlantEquipmentsEvents, id);
       }
 
       if (
@@ -179,7 +180,7 @@ export class PlantsEquipmentsEventsService {
       });
 
     if (isNil(plantsEquipmentsEvent)) {
-      throw new RouteNoDataFoundError(PlantsEquipmentsEvents, id);
+      throw new RouteNoDataFoundError(PlantEquipmentsEvents, id);
     }
 
     return plantsEquipmentsEvent;
@@ -196,7 +197,7 @@ export class PlantsEquipmentsEventsService {
       deletedRows: deleteResult.affected,
     });
 
-    return getDeleteApiResponse(PlantsEquipmentsEvents, id);
+    return getDeleteApiResponse(PlantEquipmentsEvents, id);
   }
 
   public async createImage(
@@ -206,7 +207,7 @@ export class PlantsEquipmentsEventsService {
     const plantsEquipmentsEvent = await this.getById(id);
 
     if (isNil(plantsEquipmentsEvent)) {
-      throw new RouteNoDataFoundError(PlantsEquipmentsEvents, id);
+      throw new RouteNoDataFoundError(PlantEquipmentsEvents, id);
     }
 
     const url = await this.fileService.upload(image);
@@ -224,7 +225,7 @@ export class PlantsEquipmentsEventsService {
 
     return this.classMapper.map(
       plantEquipmentsEventsImage,
-      PlantEquipmentsEventsImages,
+      PlantEquipmentsEventsImage,
       PlantEquipmentsEventsImagesResponseDto,
     );
   }
@@ -237,11 +238,11 @@ export class PlantsEquipmentsEventsService {
       ]);
 
     if (isNil(plantsEquipmentsEvent)) {
-      throw new RouteNoDataFoundError(PlantsEquipmentsEvents, id);
+      throw new RouteNoDataFoundError(PlantEquipmentsEvents, id);
     }
 
     if (isNil(plantsEquipmentsEventImage)) {
-      throw new RouteNoDataFoundError(PlantEquipmentsEventsImages, id);
+      throw new RouteNoDataFoundError(PlantEquipmentsEventsImage, id);
     }
 
     const deleteResult = await this.plantEquipmentsEventsImagesService.delete(
@@ -252,23 +253,23 @@ export class PlantsEquipmentsEventsService {
       affected: deleteResult.affected,
     });
 
-    return getDeleteApiResponse(PlantEquipmentsEventsImages, id);
+    return getDeleteApiResponse(PlantEquipmentsEventsImage, id);
   }
 
   private toDto(
-    plantEquipmentEvents: ValueOrArray<PlantsEquipmentsEvents>,
-  ): MappedType<PlantsEquipmentsEvents, PlantsEquipmentsEventsResponseDto> {
+    plantEquipmentEvents: ValueOrArray<PlantEquipmentsEvents>,
+  ): MappedType<PlantEquipmentsEvents, PlantsEquipmentsEventsResponseDto> {
     if (Array.isArray(plantEquipmentEvents)) {
       return this.classMapper.mapArray(
         plantEquipmentEvents,
-        PlantsEquipmentsEvents,
+        PlantEquipmentsEvents,
         PlantsEquipmentsEventsResponseDto,
       ) as any;
     }
 
     return this.classMapper.map(
       plantEquipmentEvents,
-      PlantsEquipmentsEvents,
+      PlantEquipmentsEvents,
       PlantsEquipmentsEventsResponseDto,
     ) as any;
   }

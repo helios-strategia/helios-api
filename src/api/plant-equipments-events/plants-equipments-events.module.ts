@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { PlantsEquipmentsEventsController } from '@/api/plant-equipments-events/plants-equipments-events.controller';
 import { PlantsEquipmentsEventsService } from '@/api/plant-equipments-events/plants-equipments-events.service';
@@ -15,7 +15,7 @@ import { PlantsEquipmentsEventsProfile } from '@/api/plant-equipments-events/pla
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PlantsEquipmentsEvents]),
+    TypeOrmModule.forFeature([PlantEquipmentsEvents]),
     PlantModule,
     PlantEquipmentsModule,
     ServiceModule,

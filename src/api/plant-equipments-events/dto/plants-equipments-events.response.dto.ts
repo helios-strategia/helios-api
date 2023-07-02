@@ -6,6 +6,7 @@ import { PlantEquipmentsType } from 'src/types/plant-equipments';
 import { BaseEntityResponseDto } from '@/api/base-entity/base-entity.response.dto';
 import { AutoMap } from '@automapper/classes';
 import { PlantEquipmentsEventsImagesResponseDto } from '@/api/plant-equipments-events-images/dto';
+import { PlantEquipmentsResponseDto } from '@/api/plant-equipments/plant-equipments.response.dto';
 
 export class PlantsEquipmentsEventsResponseDto
   extends BaseEntityResponseDto
@@ -37,4 +38,7 @@ export class PlantsEquipmentsEventsResponseDto
 
   @AutoMap(() => [PlantEquipmentsEventsImagesResponseDto])
   public readonly plantEquipmentsEventsImages: PlantEquipmentsEventsImagesResponseDto[];
+
+  @AutoMap(() => PlantEquipmentsResponseDto)
+  public readonly plantEquipment: PlantEquipmentsResponseDto;
 }

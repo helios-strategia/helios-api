@@ -5,7 +5,7 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitterService } from '@/event/event-emitter.service';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -16,7 +16,7 @@ import { PlantsEquipmentsEventsUpdatedEvent } from '@/event/plants-equipments-ev
 
 @Injectable()
 export class PlantsEquipmentsEventsSubscriber
-  implements EntitySubscriberInterface<PlantsEquipmentsEvents>
+  implements EntitySubscriberInterface<PlantEquipmentsEvents>
 {
   @Inject(EventEmitterService)
   private readonly eventEmitterService: EventEmitterService;
@@ -26,10 +26,10 @@ export class PlantsEquipmentsEventsSubscriber
   }
 
   public listenTo() {
-    return PlantsEquipmentsEvents;
+    return PlantEquipmentsEvents;
   }
 
-  public afterInsert(event: InsertEvent<PlantsEquipmentsEvents>): void {
+  public afterInsert(event: InsertEvent<PlantEquipmentsEvents>): void {
     Logger.log('PlantsEquipmentsEventsSubscriber#afterInsert', {
       entity: event.entity,
     });
@@ -40,7 +40,7 @@ export class PlantsEquipmentsEventsSubscriber
     );
   }
 
-  public afterUpdate(event: UpdateEvent<PlantsEquipmentsEvents>): void {
+  public afterUpdate(event: UpdateEvent<PlantEquipmentsEvents>): void {
     Logger.log('PlantsEquipmentsEventsSubscriber#afterUpdate', {
       databaseEntity: event.databaseEntity?.id,
       entity: event.entity,
@@ -56,7 +56,7 @@ export class PlantsEquipmentsEventsSubscriber
     );
   }
 
-  public afterRemove(event: RemoveEvent<PlantsEquipmentsEvents>): void {
+  public afterRemove(event: RemoveEvent<PlantEquipmentsEvents>): void {
     Logger.log('PlantsEquipmentsEventsSubscriber#afterRemove', {
       entity: event.entity,
     });

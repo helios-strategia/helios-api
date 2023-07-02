@@ -5,8 +5,8 @@ import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantEquipmentsEventsImagesResponseDto } from '@/api/plant-equipments-events-images/dto';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { PlantEquipmentsEventsImages } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEventsImage } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 
 @Injectable()
 export class PlantEquipmentsEventsImagesService {
@@ -24,7 +24,7 @@ export class PlantEquipmentsEventsImagesService {
   }: {
     url: string;
     name: string;
-    plantEquipmentEvent: PlantsEquipmentsEvents;
+    plantEquipmentEvent: PlantEquipmentsEvents;
   }) {
     return this.plantEquipmentsEventsImagesRepository.save({
       url,
@@ -54,7 +54,7 @@ export class PlantEquipmentsEventsImagesService {
 
     return this.classMapper.mapArray(
       plantEquipmentsEventsImages,
-      PlantEquipmentsEventsImages,
+      PlantEquipmentsEventsImage,
       PlantEquipmentsEventsImagesResponseDto,
     );
   }

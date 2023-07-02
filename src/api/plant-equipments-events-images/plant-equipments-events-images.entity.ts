@@ -1,13 +1,13 @@
 import { Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { BaseImageEntity } from '@/api/base-image-entity/base-image.entity';
 
-@Entity({ name: 'plants_equipments_events_images' })
+@Entity({ name: 'plant_equipments_events_images' })
 @Index(['url'], { unique: false })
 @Index(['name'], { unique: false })
-export class PlantEquipmentsEventsImages extends BaseImageEntity {
+export class PlantEquipmentsEventsImage extends BaseImageEntity {
   @ManyToOne(
-    () => PlantsEquipmentsEvents,
+    () => PlantEquipmentsEvents,
     (plantEquipmentEvent) => plantEquipmentEvent.plantEquipmentsEventsImages,
     {
       createForeignKeyConstraints: false,
@@ -16,5 +16,5 @@ export class PlantEquipmentsEventsImages extends BaseImageEntity {
   @JoinColumn([
     { name: 'plant_equipment_event_id', referencedColumnName: 'id' },
   ])
-  public readonly plantEquipmentEvent: PlantsEquipmentsEvents;
+  public readonly plantEquipmentEvent: PlantEquipmentsEvents;
 }

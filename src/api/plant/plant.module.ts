@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PlantController } from './plant.controller';
 import { PlantService } from './plant.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +11,7 @@ import { PlantStatusHistoryModule } from '@/api/plant-status-history/plant-statu
 import { PlantEquipmentsModule } from '@/api/plant-equipments/plant-equipments.module';
 import { PlantFilesService } from '@/api/plant/plant-files.service';
 import { PlantImagesModule } from '@/api/plant-images/plant-images.module';
+import { GenerationTariffModule } from '@/api/generation-tariff/generation-tariff.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PlantImagesModule } from '@/api/plant-images/plant-images.module';
     PlantStatusHistoryModule,
     PlantEquipmentsModule,
     PlantImagesModule,
+    forwardRef(() => GenerationTariffModule),
   ],
   controllers: [PlantController],
   providers: [PlantService, PlantRepository, PlantFilesService],

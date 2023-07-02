@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PlantEquipmentsEventsImages } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
+import { PlantEquipmentsEventsImage } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
 import { PlantEquipmentsEventsImagesRepository } from '@/api/plant-equipments-events-images/plant-equipments-events-images.repository';
 import { PlantEquipmentsEventsImagesService } from '@/api/plant-equipments-events-images/plant-equipments-events-images.service';
 import { ServiceModule } from '@/service/service.module';
@@ -8,7 +8,7 @@ import { PlantEquipmentsEventsImagesProfile } from '@/api/plant-equipments-event
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PlantEquipmentsEventsImages]),
+    TypeOrmModule.forFeature([PlantEquipmentsEventsImage]),
     ServiceModule,
   ],
   providers: [

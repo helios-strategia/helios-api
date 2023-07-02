@@ -7,4 +7,5 @@ export interface PlantEquipmentsResponseDto extends BaseEntity {
   readonly equipmentType: PlantEquipmentsType;
   readonly plantsEquipmentsEvents: PlantEquipmentsEventsResponseDto[];
   readonly plant: PlantResponseDto;
+  readonly plantId: number;
 }

@@ -10,7 +10,7 @@ import {
 import { Quarter } from '@/types/common';
 import { enumValidationMessage } from '@/utils';
 
-export class GenerationTarrifCreateRequestDto
+export class GenerationTariffCreateRequestDto
   implements GenerationTariffCreateRequestDtoType
 {
   @IsNotEmpty()
@@ -29,9 +29,4 @@ export class GenerationTarrifCreateRequestDto
   @Min(2000)
   @Max(2099)
   public readonly year: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  public readonly plantId: number;
 }

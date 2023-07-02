@@ -17,4 +17,7 @@ export class PlantEquipmentsResponseDto
 
   @AutoMap(() => PlantResponseDto)
   public readonly plant: PlantResponseDto;
+
+  @AutoMap(() => Number)
+  public readonly plantId: number;
 }

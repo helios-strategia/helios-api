@@ -5,7 +5,7 @@ import { PlantDocumentType } from '@/types/plant-document';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { PlantImagesService } from '@/api/plant-images/plant-images.service';
-import { PlantImages } from '@/api/plant-images/plant-images.entity';
+import { PlantImage } from '@/api/plant-images/plant-images.entity';
 
 export enum PlantFileTypes {
   Documents,
@@ -35,7 +35,7 @@ export class PlantFilesService {
 
   public async upload(
     fileByTypesMap: FileTypesMap,
-  ): Promise<[PlantDocument[], PlantImages[], string | null, string | null]> {
+  ): Promise<[PlantDocument[], PlantImage[], string | null, string | null]> {
     return Promise.all([
       this.documentService.createMany(
         fileByTypesMap[PlantFileTypes.Documents] || [],

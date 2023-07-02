@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import { Plant } from '@/api/plant/plant.entity';
 import { PlantEquipmentsType } from 'src/types/plant-equipments';
 import { AutoMap } from '@automapper/classes';
@@ -22,9 +22,9 @@ export class PlantEquipments extends BaseEntity {
   })
   public readonly equipmentType: PlantEquipmentsType;
 
-  @AutoMap(() => [PlantsEquipmentsEvents])
+  @AutoMap(() => [PlantEquipmentsEvents])
   @OneToMany(
-    () => PlantsEquipmentsEvents,
+    () => PlantEquipmentsEvents,
     (plantsEquipmentsEvents) => plantsEquipmentsEvents.plantEquipment,
     {
       createForeignKeyConstraints: false,
@@ -32,7 +32,14 @@ export class PlantEquipments extends BaseEntity {
       onUpdate: 'NO ACTION',
     },
   )
-  public readonly plantsEquipmentsEvents: PlantsEquipmentsEvents[];
+  public readonly plantsEquipmentsEvents: PlantEquipmentsEvents[];
+
+  @AutoMap(() => Number)
+  @Column('bigint', {
+    name: 'plant_id',
+    nullable: false,
+  })
+  public readonly plantId: number;
 
   @AutoMap(() => Plant)
   @ManyToOne(() => Plant, (plant) => plant.plantEquipmentsStatus, {

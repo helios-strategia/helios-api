@@ -33,7 +33,9 @@ export class CalendarEventService {
   ) {
     const { images, plantId, ...restCalendarEventCreateRequestDto } =
       calendarEventCreateRequest;
-    const plant = await this.plantService.findById(plantId);
+    const plant = await this.plantService.findByIdOrElseThrowNotFoundError(
+      plantId,
+    );
 
     if (isNil(plant)) {
       throw new NoDataFoundError(Plant, plantId);

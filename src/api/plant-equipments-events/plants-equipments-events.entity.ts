@@ -11,11 +11,11 @@ import {
 } from 'typeorm';
 import { PlantEquipmentEventGenerationAffects } from '@/types/plant-equipments-events';
 import { PlantEquipments } from '@/api/plant-equipments/plant-equipments.entity';
-import { PlantEquipmentsEventsImages } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
+import { PlantEquipmentsEventsImage } from '@/api/plant-equipments-events-images/plant-equipments-events-images.entity';
 import { AutoMap } from '@automapper/classes';
 
-@Entity('plants_equipments_events')
-export class PlantsEquipmentsEvents extends BaseEntity {
+@Entity('plant_equipments_events')
+export class PlantEquipmentsEvents extends BaseEntity {
   @AutoMap()
   @Column('text', {
     name: 'location',
@@ -59,6 +59,13 @@ export class PlantsEquipmentsEvents extends BaseEntity {
   })
   public readonly generationAffectsType: PlantEquipmentEventGenerationAffects;
 
+  @AutoMap(() => Number)
+  @Column('bigint', {
+    name: 'plant_equipment_id',
+    nullable: false,
+  })
+  public readonly plantEquipmentId: number;
+
   @AutoMap(() => PlantEquipments)
   @ManyToOne(
     () => PlantEquipments,
@@ -70,16 +77,16 @@ export class PlantsEquipmentsEvents extends BaseEntity {
   @JoinColumn([{ name: 'plant_equipment_id', referencedColumnName: 'id' }])
   public readonly plantEquipment: PlantEquipments;
 
-  @AutoMap(() => [PlantEquipmentsEventsImages])
+  @AutoMap(() => [PlantEquipmentsEventsImage])
   @OneToMany(
-    () => PlantEquipmentsEventsImages,
+    () => PlantEquipmentsEventsImage,
     (plantEquipmentsEventsImages) =>
       plantEquipmentsEventsImages.plantEquipmentEvent,
     {
       createForeignKeyConstraints: false,
     },
   )
-  public readonly plantEquipmentsEventsImages: PlantEquipmentsEventsImages[];
+  public readonly plantEquipmentsEventsImages: PlantEquipmentsEventsImage[];
 
   @AfterInsert()
   public afterInsertHandler() {

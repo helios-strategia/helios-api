@@ -36,8 +36,6 @@ import { PlantDocumentType } from '@/types/plant-document';
 export class PlantService {
   @Inject(PlantRepository)
   private readonly plantRepository: PlantRepository;
-  // @Inject(PlantDocumentService)
-  // private readonly documentService: PlantDocumentService;
   @Inject(UserService)
   private readonly userService: UserService;
   @Inject(PlantStatusHistoryService)
@@ -64,13 +62,6 @@ export class PlantService {
         'taxStatement',
         'images',
       ),
-      documents: plantCreateRequestDto?.documents?.map(
-        ({ originalName, size, mimetype }) => ({
-          fileName: originalName,
-          size: size,
-          ext: mimetype,
-        }),
-      ),
     });
 
     const {
@@ -85,7 +76,6 @@ export class PlantService {
       ...restCreatePayload
     } = plantCreateRequestDto;
 
-    //const documentsSaved: PlantDocument[] = [];
     const [user, plantWithExistingAscme] = await Promise.all([
       this.userService.findById(userId),
       this.plantRepository.findOne({
@@ -113,20 +103,6 @@ export class PlantService {
     let plant: Plant;
 
     try {
-      // if (documents?.length) {
-      //   documentsSaved.push(
-      //     ...(await this.documentService.createMany(
-      //       documents.map((doc, i) => ({
-      //         file: doc,
-      //         documentType: documentTypes[i],
-      //       })),
-      //       false,
-      //     )),
-      //   );
-      //
-      //   Logger.log('PlantService#create documents saved');
-      // }
-
       const [documentsUpload, imagesUpload, taxStatementUrl, mainPlanUrl] =
         await this.plantFilesService.upload({
           [PlantFileTypes.Documents]: documents.map((doc, i) => ({
@@ -198,7 +174,7 @@ export class PlantService {
     );
   }
 
-  public async getById(id: number) {
+  public async findByIdOrElseThrowValidationError(id: number) {
     const plant = await this.plantRepository.findById(id);
 
     if (isNil(plant)) {
@@ -208,7 +184,7 @@ export class PlantService {
     return this.classMapper.map(plant, Plant, PlantResponseDto);
   }
 
-  public async findById(id: number) {
+  public async findByIdOrElseThrowNotFoundError(id: number) {
     const plant = await this.plantRepository.findById(id);
 
     if (isNil(plant)) {
@@ -216,6 +192,10 @@ export class PlantService {
     }
 
     return plant;
+  }
+
+  public findById(id: number) {
+    return this.plantRepository.findOne({ where: { id } });
   }
 
   public async findAll() {
@@ -245,7 +225,7 @@ export class PlantService {
   public async deleteById(id: number) {
     Logger.log('PlantService#deleteById', { plantId: id });
 
-    const plant = await this.findById(id);
+    const plant = await this.findByIdOrElseThrowNotFoundError(id);
 
     if (isNil(plant)) {
       throw new NoDataFoundError(Plant, id);

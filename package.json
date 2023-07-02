@@ -54,6 +54,7 @@
     "form-data": "^4.0.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
+    "match-iz": "^4.0.1",
     "mime-types": "^2.1.35",
     "morgan": "^1.10.0",
     "nest-winston": "^1.7.1",

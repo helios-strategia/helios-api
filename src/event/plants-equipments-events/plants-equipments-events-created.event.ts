@@ -1,4 +1,4 @@
-import { PlantsEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
+import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equipments-events.entity';
 import {
   Events,
   PlantsEquipmentsEventsCreatedEvent as PlantsEquipmentsEventsCreateEventType,
@@ -9,7 +9,7 @@ export class PlantsEquipmentsEventsCreatedEvent
   extends BaseEvent
   implements PlantsEquipmentsEventsCreateEventType
 {
-  constructor(public readonly plantsEquipmentsEvent: PlantsEquipmentsEvents) {
+  constructor(public readonly plantsEquipmentsEvent: PlantEquipmentsEvents) {
     super(Events.PlantsEquipmentsEventsCreated);
   }
 }

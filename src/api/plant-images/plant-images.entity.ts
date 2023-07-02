@@ -3,7 +3,7 @@ import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Plant } from '@/api/plant/plant.entity';
 
 @Entity({ name: 'plant_images' })
-export class PlantImages extends BaseImageEntity {
+export class PlantImage extends BaseImageEntity {
   @ManyToOne(() => Plant, (plant) => plant.images, {
     createForeignKeyConstraints: false,
   })
