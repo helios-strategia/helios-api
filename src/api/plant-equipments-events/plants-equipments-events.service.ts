@@ -273,4 +273,8 @@ export class PlantsEquipmentsEventsService {
       PlantsEquipmentsEventsResponseDto,
     ) as any;
   }
+
+  public async getAll() {
+    return this.toDto(await this.plantsEquipmentsEventsRepository.find());
+  }
 }

@@ -28,3 +28,7 @@ export enum Quarter {
   Third = 3,
   Four = 4,
 }
+
+type InputSignleEitherArray<T> = T | T[];
+
+type OutputSignleEitherArray<T> = T extends T[] ? T[] : T;

@@ -1,17 +1,9 @@
-import {
-  Body,
-  Controller,
-  Inject,
-  Logger,
-  Post,
-  Req,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { LoginDto } from '@/api/auth/auth.dto';
+import { Controller, Inject, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from '@/api/auth/auth.service';
 import { LocalAuthGuard } from '@/api/auth/local-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('/api/v1/auth')
 export class AuthController {
   @Inject(AuthService)

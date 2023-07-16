@@ -21,7 +21,7 @@ import { UserRole } from '@/types/user';
 
 @Roles(UserRole.ADMIN)
 @ApiBearerAuth()
-@ApiTags('source-points')
+@ApiTags('source points')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/v1/source-points')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -29,7 +29,7 @@ export class SourcePointController {
   @Inject(SourcePointService)
   private readonly sourcePointService: SourcePointService;
 
-  @Post('batchUpdate')
+  @Post('batch-update')
   private async batchUpdate(
     @Body() sourcePointRequestUpdateDto: SourcePointRequestUpdateDto[],
   ) {
@@ -41,7 +41,7 @@ export class SourcePointController {
     return this.sourcePointService.findAll();
   }
 
-  @Get('/getByCode')
+  @Get('/get-by-code')
   private async getByCode(
     @Query(
       'code',

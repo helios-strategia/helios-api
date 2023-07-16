@@ -50,7 +50,7 @@ export class EmployeeService {
 
     const [position, [plants, plantsCount]]: [Position, [Plant[], number]] =
       await Promise.all([
-        this.positionService.findById(positionId),
+        this.positionService.getById(positionId),
         this.plantService.getAllAndCountByIds(plantIds),
       ]);
 
@@ -164,7 +164,7 @@ export class EmployeeService {
     });
 
     if (positionId) {
-      const position = await this.positionService.findById(positionId);
+      const position = await this.positionService.getById(positionId);
 
       if (isNil(position)) {
         throw new NoDataFoundError(Position, positionId);
