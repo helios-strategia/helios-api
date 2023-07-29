@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PlantDocumentRepository } from '@/api/plant-document/plant-document.repository';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { PlantDocumentResponseDto } from '@/api/plant-document/plant-document.response.dto';

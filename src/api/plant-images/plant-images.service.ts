@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 import { PlantImagesRepository } from '@/api/plant-images/plant-images.repository';

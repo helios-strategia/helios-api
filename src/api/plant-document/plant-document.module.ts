@@ -4,7 +4,7 @@ import { PlantDocumentService } from './plant-document.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlantDocument } from './plant-document.entity';
 import { PlantDocumentRepository } from '@/api/plant-document/plant-document.repository';
-import { ServiceModule } from '@/service/service.module';
+import { LibraryModule } from '@/library/library.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { PlantModule } from '@/api/plant/plant.module';
 import { PlantDocumentProfile } from '@/api/plant-document/plant-document.profile';
@@ -12,7 +12,7 @@ import { PlantDocumentProfile } from '@/api/plant-document/plant-document.profil
 @Module({
   imports: [
     TypeOrmModule.forFeature([PlantDocument]),
-    ServiceModule,
+    LibraryModule,
     NestjsFormDataModule,
     forwardRef(() => PlantModule),
   ],

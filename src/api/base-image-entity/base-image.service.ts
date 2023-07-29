@@ -3,13 +3,13 @@ import { BaseEntity } from '@/api/base-entity/base.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Inject } from '@nestjs/common';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { CalendarEventImage } from '@/api/calendar-event-images/calendar-event-image.entity';
-import { CalendarEvent } from '@/api/calendar-event/calendar-event.entity';
+import { OperationImage } from '@/api/operation-image/operation-image.entity';
+import { Operation } from '@/api/operation/operation.entity';
 import { EntityTarget } from 'typeorm/common/EntityTarget';
-import { CalendarEventImageRepository } from '@/api/calendar-event-images/calendar-event-image.repository';
+import { OperationImageRepository } from '@/api/operation-image/operation-image.repository';
 
 type Constructor<T = any> = new (...args: any[]) => T;
 

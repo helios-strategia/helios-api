@@ -56,7 +56,7 @@ async function bootstrap() {
 
   await app.listen(port, async () => {
     Logger.log(`App start with profile: ${process.env.NODE_ENV}`);
-    Logger.log(`App start in port ${port}`);
+    Logger.log(`App start in port [${port}]`);
   });
 }
 

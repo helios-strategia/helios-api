@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { PlantDocumentService } from '@/api/plant-document/plant-document.service';
 import { PlantDocumentType } from '@/types/plant-document';
 import { MemoryStoredFile } from 'nestjs-form-data';

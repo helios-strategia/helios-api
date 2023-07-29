@@ -4,7 +4,7 @@ import { PlantEquipmentsEvents } from '@/api/plant-equipments-events/plants-equi
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { PlantsEquipmentsEventsController } from '@/api/plant-equipments-events/plants-equipments-events.controller';
 import { PlantsEquipmentsEventsService } from '@/api/plant-equipments-events/plants-equipments-events.service';
-import { ServiceModule } from '@/service/service.module';
+import { LibraryModule } from '@/library/library.module';
 import { PlantModule } from '@/api/plant/plant.module';
 import { PlantEquipmentsModule } from '@/api/plant-equipments/plant-equipments.module';
 import { PlantsEquipmentsEventsRepository } from '@/api/plant-equipments-events/plants-equipments-events.repository';
@@ -18,7 +18,7 @@ import { PlantsEquipmentsEventsProfile } from '@/api/plant-equipments-events/pla
     TypeOrmModule.forFeature([PlantEquipmentsEvents]),
     PlantModule,
     PlantEquipmentsModule,
-    ServiceModule,
+    LibraryModule,
     NestjsFormDataModule,
     EventsModule,
     PlantEquipmentsEventsImagesModule,
@@ -30,6 +30,6 @@ import { PlantsEquipmentsEventsProfile } from '@/api/plant-equipments-events/pla
     PlantsEquipmentsEventsSubscriber,
     PlantsEquipmentsEventsProfile,
   ],
-  exports: [PlantsEquipmentsEventsService],
+  exports: [PlantsEquipmentsEventsService, PlantsEquipmentsEventsSubscriber],
 })
 export class PlantsEquipmentsEventsModule {}

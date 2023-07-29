@@ -5,7 +5,7 @@ import { Mapper } from '@automapper/core';
 import { hash } from 'bcrypt';
 import { omit } from 'lodash';
 import { UserRepository } from '@/api/user/user.repository';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { NoDataFoundError } from '@/error/no-data-found.error';
 import { UserResponseDto } from '@/api/user/dto/user.response.dto';
 import { UserCreateRequestDto } from '@/api/user/dto/user-create.request.dto';

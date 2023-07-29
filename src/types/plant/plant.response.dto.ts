@@ -4,7 +4,7 @@ import { PlantStatusHistoryResponseDto } from '@/types/plant-status-history';
 import { PlantProductivityDeclineRate } from '@/types/plant/plant-productivity-decline-rate';
 import { UserResponseDto } from '@/types/user';
 import { PlantDocumentResponseDto } from '@/types/plant-document';
-import { CalendarEventResponseDto } from '@/types/calendar-event';
+import { OperationResponseDto } from 'src/types/operation';
 import { PlantImagesResponseDto } from '@/types/plant-images';
 
 export interface PlantResponseDto extends BaseEntity {
@@ -25,7 +25,7 @@ export interface PlantResponseDto extends BaseEntity {
   readonly plantStatusHistory?: PlantStatusHistoryResponseDto[];
   readonly user?: UserResponseDto;
   readonly documents?: PlantDocumentResponseDto[];
-  readonly calendarEvents?: CalendarEventResponseDto[];
+  readonly operations?: OperationResponseDto[];
   readonly address?: string;
   readonly VATNumber?: number;
   readonly taxStatementUrl?: string;

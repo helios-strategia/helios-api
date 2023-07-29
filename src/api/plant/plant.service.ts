@@ -6,7 +6,7 @@ import { UserService } from '@/api/user/user.service';
 import { NoDataFoundError } from '@/error/no-data-found.error';
 import { User } from '@/api/user/user.entity';
 import { isNil, omit } from 'lodash';
-import { TimeService } from '@/service/time-service/time.service';
+import { TimeService } from '@/library/time-service/time.service';
 import { Plant } from '@/api/plant/plant.entity';
 import { ValidationError } from '@/error/validation.error';
 import {
@@ -19,7 +19,7 @@ import { PlantStatusHistoryService } from '@/api/plant-status-history/plant-stat
 import { UserRole } from '@/types/user';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { TransactionPerformer } from '@/service/transaction-performer';
+import { TransactionPerformer } from '@/library/transaction-performer';
 import { DBConflictError } from '@/error/d-b-conflict.error';
 import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';
 import { getDeleteApiResponse } from '@/utils';

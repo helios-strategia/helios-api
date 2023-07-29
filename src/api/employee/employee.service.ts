@@ -11,7 +11,7 @@ import { PlantService } from '@/api/plant/plant.service';
 import { Plant } from '@/api/plant/plant.entity';
 import { isNil, omit } from 'lodash';
 import { ScheduleScheme } from '@/api/employee/employee.entity';
-import { FileService } from '@/service/file-serivce/file-service';
+import { FileService } from '@/library/file-serivce/file-service';
 
 @Injectable()
 export class EmployeeService {

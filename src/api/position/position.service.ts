@@ -2,23 +2,22 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PositionRepository } from '@/api/position/position.repository';
 import { BaseService } from '@/api/base-entity/base.service';
 import { Position } from '@/api/position/position.entity';
-import { PositionResponseDto } from '@/api/position/dto/position.response.dto';
 import { isNil } from 'lodash';
 import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
 import { PositionCreateRequestDto } from '@/api/position/dto/position-create.request.dto';
 import { PositionUpdateRequestDto } from '@/api/position/dto/position-update.request.dto';
 import { DBConflictError } from '@/error/d-b-conflict.error';
 
+const getDBConflictErrorMessage = (name: string) =>
+  `Position [${name}] already exists`;
+
 @Injectable()
-export class PositionService extends BaseService<
-  Position,
-  PositionResponseDto
-> {
+export class PositionService extends BaseService<Position> {
   @Inject(PositionRepository)
   private readonly positionRepository: PositionRepository;
 
   constructor() {
-    super(Position, PositionResponseDto);
+    super(Position);
   }
 
   public async isPresent(id: number) {
@@ -63,6 +62,16 @@ export class PositionService extends BaseService<
   }
 
   public async create(positionCreateRequestDto: PositionCreateRequestDto) {
+    if (
+      (await this.positionRepository.count({
+        where: { name: positionCreateRequestDto.name },
+      })) === 1
+    ) {
+      throw new DBConflictError(
+        getDBConflictErrorMessage(positionCreateRequestDto.name),
+      );
+    }
+
     const position = await this.positionRepository.save(
       positionCreateRequestDto,
     );
@@ -86,7 +95,7 @@ export class PositionService extends BaseService<
       })) === 1
     ) {
       throw new DBConflictError(
-        `Position [${positionUpdateRequestDto.name}] already exists`,
+        getDBConflictErrorMessage(positionUpdateRequestDto.name),
       );
     }
 

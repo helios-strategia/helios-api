@@ -7,7 +7,7 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
 
 import { UserProfile } from '@/api/user/user.profile';
 import { PassportModule } from '@nestjs/passport';
-import { ServiceModule } from '@/service/service.module';
+import { LibraryModule } from '@/library/library.module';
 import { UserRepository } from '@/api/user/user.repository';
 
 @Module({
@@ -15,7 +15,7 @@ import { UserRepository } from '@/api/user/user.repository';
     TypeOrmModule.forFeature([User]),
     NestjsFormDataModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    ServiceModule,
+    LibraryModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserProfile, UserRepository],

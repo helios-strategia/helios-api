@@ -6,7 +6,7 @@ import { ApiModule } from './api/api.module';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
-import { ServiceModule } from './service/service.module';
+import { LibraryModule } from '@/library/library.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import * as config from 'config';
@@ -21,7 +21,7 @@ import { RequestContextModule } from '@/request-context/request-context.module';
     AutomapperModule.forRoot({
       strategyInitializer: classes(),
     }),
-    ServiceModule,
+    LibraryModule,
     ConfigModule.forRoot({
       load: [
         () => {

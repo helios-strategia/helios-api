@@ -29,7 +29,7 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger';
-import { FileService } from '@/service/file-serivce/file-service';
+import { FileService } from '@/library/file-serivce/file-service';
 import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
 import { UserResponseDto } from './dto/user.response.dto';
 import { UserCreateRequestDto } from './dto/user-create.request.dto';

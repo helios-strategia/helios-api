@@ -8,7 +8,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { CalendarEvent } from '../calendar-event/calendar-event.entity';
+import { Operation } from '@/api/operation/operation.entity';
 import { PlantDocument } from '@/api/plant-document/plant-document.entity';
 import { Employee } from '../employee/employee.entity';
 import { User } from '../user/user.entity';
@@ -20,6 +20,7 @@ import { PlantProductivityDeclineRate } from '@/types/plant';
 import { AutoMap } from '@automapper/classes';
 import { GenerationTariff } from '@/api/generation-tariff/generation-tariff.entity';
 import { PlantImage } from '@/api/plant-images/plant-images.entity';
+import { defaultRelationOptions } from '@/consts';
 
 @Index(['ascmePlantCode'], { unique: true })
 @Index(['name'], { unique: true })
@@ -97,23 +98,25 @@ export class Plant extends BaseEntity {
   public readonly status: PlantStatus;
 
   @AutoMap()
-  @OneToMany(() => CalendarEvent, (calendarEvent) => calendarEvent.plant, {
+  @OneToMany(() => Operation, (calendarEvent) => calendarEvent.plant, {
     createForeignKeyConstraints: false,
   })
-  public readonly calendarEvents: CalendarEvent[];
+  public readonly calendarEvents: Operation[];
 
   @AutoMap(() => [PlantDocument])
-  @OneToMany(() => PlantDocument, (document) => document.plant, {
-    onDelete: 'NO ACTION',
-    onUpdate: 'NO ACTION',
-    createForeignKeyConstraints: false,
-  })
+  @OneToMany(
+    () => PlantDocument,
+    (document) => document.plant,
+    defaultRelationOptions,
+  )
   public readonly documents: PlantDocument[];
 
   @AutoMap()
-  @ManyToMany(() => Employee, (employee) => employee.plants, {
-    createForeignKeyConstraints: false,
-  })
+  @ManyToMany(
+    () => Employee,
+    (employee) => employee.plants,
+    defaultRelationOptions,
+  )
   @JoinTable({
     name: 'plant_employee',
     joinColumn: { name: 'plant_id', referencedColumnName: 'id' },

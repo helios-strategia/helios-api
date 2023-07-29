@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { PlantStatus } from '@/types/plant/plant-status.enum';
-import { CalendarEvent } from '@/api/calendar-event/calendar-event.entity';
+import { Operation } from '@/api/operation/operation.entity';
 import { Employee } from '@/api/employee/employee.entity';
 import {
   PlantProductivityDeclineRate,
@@ -11,6 +11,7 @@ import { BaseEntityResponseDto } from '@/api/base-entity/base-entity.response.dt
 import { UserResponseDto } from '@/api/user/dto/user.response.dto';
 import { PlantDocumentResponseDto } from '@/api/plant-document/plant-document.response.dto';
 import { PlantImagesResponseDto } from '@/api/plant-images/dto/plant-images.response.dto';
+import { OperationResponseDto } from '@/api/operation/dto/operation.response.dto';
 
 export class PlantResponseDto
   extends BaseEntityResponseDto
@@ -41,7 +42,7 @@ export class PlantResponseDto
   public readonly status: PlantStatus;
 
   @AutoMap()
-  public readonly calendarEvents?: CalendarEvent[];
+  public readonly operations?: OperationResponseDto[];
 
   @AutoMap(() => [PlantDocumentResponseDto])
   public readonly documents?: PlantDocumentResponseDto[];

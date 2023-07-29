@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { PlantEquipmentsEventsImagesRepository } from '@/api/plant-equipments-events-images/plant-equipments-events-images.repository';
-import { MinioFileService } from '@/service/file-serivce/minio-file-service';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { PlantEquipmentsEventsImagesResponseDto } from '@/api/plant-equipments-events-images/dto';
 import { InjectMapper } from '@automapper/nestjs';

@@ -22,22 +22,31 @@ import { Roles } from '@/api/auth/roles.decorator';
 import { UserRole } from '@/types/user';
 import { PositionUpdateRequestDto } from '@/api/position/dto/position-update.request.dto';
 import { PositionResponseDto } from '@/api/position/dto/position.response.dto';
+import { BaseController } from '@/api/base-entity/base.controller';
+import { Position } from '@/api/position/position.entity';
 
 @ApiBearerAuth()
 @ApiTags('positions')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/v1/positions')
 @UseInterceptors(ClassSerializerInterceptor)
-export class PositionController {
-  @Inject(PositionService)
-  private readonly positionService: PositionService;
+export class PositionController extends BaseController<
+  Position,
+  PositionResponseDto
+> {
+  constructor(
+    @Inject(PositionService)
+    private readonly positionService: PositionService,
+  ) {
+    super(Position, PositionResponseDto);
+  }
 
   @Post()
   @Roles(UserRole.ADMIN)
   private async create(
     @Body() positionCreateRequestDto: PositionCreateRequestDto,
   ): Promise<PositionResponseDto> {
-    return this.positionService.toResponseDto(
+    return this.toResponseDto(
       await this.positionService.create(positionCreateRequestDto),
     );
   }
@@ -51,9 +60,7 @@ export class PositionController {
     )
     id: number,
   ) {
-    return this.positionService.toResponseDto(
-      await this.positionService.getById(id),
-    );
+    return this.toResponseDto(await this.positionService.getById(id));
   }
 
   @Delete('/:id')
@@ -78,7 +85,7 @@ export class PositionController {
     )
     id: number,
   ) {
-    return this.positionService.toResponseDto(
+    return this.toResponseDto(
       await this.positionService.update(id, positionUpdateRequestDto),
     );
   }
@@ -86,8 +93,6 @@ export class PositionController {
   @Get()
   @Roles(UserRole.ADMIN)
   private async getAll() {
-    return this.positionService.toResponseDto(
-      await this.positionService.getAll(),
-    );
+    return this.toResponseDto(await this.positionService.getAll());
   }
 }

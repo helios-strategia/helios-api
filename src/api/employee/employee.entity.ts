@@ -2,7 +2,8 @@ import { Column, Entity, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
 import { Plant } from '../plant/plant.entity';
 import { Position } from '../position/position.entity';
 import { BaseEntity } from '../base-entity/base.entity';
-import { Expose } from 'class-transformer';
+import { defaultRelationOptions } from '@/consts';
+import { AutoMap } from '@automapper/classes';
 
 export type ScheduleScheme = {
   fiveDaySchedule: boolean;
@@ -14,6 +15,7 @@ export type ScheduleScheme = {
 
 @Entity('employees', { schema: 'public' })
 export class Employee extends BaseEntity {
+  @AutoMap()
   @Column('character varying', {
     name: 'avatar_url',
     nullable: true,
@@ -21,27 +23,35 @@ export class Employee extends BaseEntity {
   })
   avatarUrl: string | null;
 
-  @Column('text', { name: 'name', nullable: false })
+  @AutoMap()
+  @Column('character varying', { name: 'name', nullable: false, length: 255 })
   name: string;
 
-  @Column('text', { name: 'surname', nullable: false })
+  @AutoMap()
+  @Column('character varying', {
+    name: 'surname',
+    nullable: false,
+    length: 255,
+  })
   surname: string;
 
-  @Column('text', { name: 'phone', nullable: true })
+  @AutoMap()
+  @Column('character varying', { name: 'phone', nullable: true, length: 255 })
   phone: string | null;
 
+  @AutoMap(() => Object)
   @Column('jsonb', { name: 'schedule_scheme', nullable: true })
   scheduleScheme?: ScheduleScheme;
 
-  @Expose({ name: 'plantIds' })
-  @ManyToMany(() => Plant, (plant) => plant.employees, {
-    createForeignKeyConstraints: false,
-  })
+  @AutoMap(() => [Plant])
+  @ManyToMany(() => Plant, (plant) => plant.employees, defaultRelationOptions)
   plants: Plant[];
 
-  @ManyToOne(() => Position, (position) => position.employees, {
-    createForeignKeyConstraints: false,
-  })
+  @ManyToOne(
+    () => Position,
+    (position) => position.employees,
+    defaultRelationOptions,
+  )
   @JoinColumn([{ name: 'position_id', referencedColumnName: 'id' }])
   position: Position;
 }
