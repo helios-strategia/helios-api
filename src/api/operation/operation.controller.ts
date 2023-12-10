@@ -13,6 +13,7 @@ import {
   Query,
   UseGuards,
   UseInterceptors,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FormDataRequest } from 'nestjs-form-data';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -20,7 +21,7 @@ import { Roles } from '@/api/auth/roles.decorator';
 import { UserRole } from '@/types/user';
 import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
 import { RolesGuard } from '@/api/auth/roles.guard';
-import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-content-type.middleware';
 import { BaseController } from '@/api/base-entity/base.controller';
 import { OperationResponseDto } from '@/api/operation/dto/operation.response.dto';
 import { Operation } from '@/api/operation/operation.entity';
@@ -28,6 +29,11 @@ import { OperationService } from '@/api/operation/operation.service';
 import { OperationCreateRequestDto } from '@/api/operation/dto/operation-create.request.dto';
 import { OperationUpdateRequestDto } from '@/api/operation/dto/operation-update.request.dto';
 import { OperationPauseService } from '@/api/operation-pause/operation-pause.service';
+import { GetByPlantQueryDto } from '@/api/operation/dto/get-by-plant-query.dto';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
+import { OperationPause } from '@/api/operation-pause/operation-pause.entity';
+import { OperationPauseResponseDto } from '@/api/operation-pause/dto/operation-pause-response.dto';
 
 @ApiBearerAuth()
 @ApiTags('Operations')
@@ -43,6 +49,8 @@ export class OperationController extends BaseController<
     public readonly operationService: OperationService,
     @Inject(OperationPauseService)
     public readonly operationPauseService: OperationPauseService,
+    @InjectMapper()
+    public readonly mapper: Mapper,
   ) {
     super(Operation, OperationResponseDto);
   }
@@ -52,11 +60,9 @@ export class OperationController extends BaseController<
   @Roles(UserRole.ADMIN)
   @UseInterceptors(ValidateContentTypeMiddleware)
   @FormDataRequest()
-  public create(
-    @Body() calendarEventCreateRequestDto: OperationCreateRequestDto,
-  ) {
+  public create(@Body() operationCreateRequestDto: OperationCreateRequestDto) {
     return this.toResponseDtoAsync(
-      this.operationService.create(calendarEventCreateRequestDto),
+      this.operationService.create(operationCreateRequestDto),
     );
   }
 
@@ -68,10 +74,10 @@ export class OperationController extends BaseController<
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-    @Body() calendarEventUpdateRequestDto: OperationUpdateRequestDto,
+    @Body() operationUpdateRequestDto: OperationUpdateRequestDto,
   ) {
     return this.toResponseDtoAsync(
-      this.operationService.update(id, calendarEventUpdateRequestDto),
+      this.operationService.update(id, operationUpdateRequestDto),
     );
   }
 
@@ -103,11 +109,11 @@ export class OperationController extends BaseController<
   @Get('/get-by-plant/:plantId')
   public get(
     @Param(
-      'id',
+      'plantId',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     plantId: number,
-    @Query() { startDate, endDate },
+    @Query(ValidationPipe) { startDate, endDate }: GetByPlantQueryDto,
   ) {
     return this.toResponseDtoArrayAsync(
       this.operationService.findAllByPlantAndStartAtAndEndAt({
@@ -115,6 +121,42 @@ export class OperationController extends BaseController<
         startDate,
         endDate,
       }),
+    );
+  }
+
+  @Roles(UserRole.ADMIN)
+  @Post('/:id/set-pause')
+  public setPause(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    return this.toOperationPauseResponseDtoAsync(
+      this.operationPauseService.create(id),
+    );
+  }
+
+  @Roles(UserRole.ADMIN)
+  @Post('/:id/end-pause')
+  public async endPause(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    await this.operationPauseService.end(id);
+  }
+
+  private async toOperationPauseResponseDtoAsync(
+    operationPause: Promise<OperationPause>,
+  ) {
+    return this.mapper.map(
+      await operationPause,
+      OperationPause,
+      OperationPauseResponseDto,
     );
   }
 }

@@ -1,8 +1,9 @@
 import { BaseEntity } from '@/api/base-entity/base.entity';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Plant } from '@/api/plant/plant.entity';
-import { Quarter } from '@/types/common';
 import { AutoMap } from '@automapper/classes';
+import { QuarterEnum } from '@/consts/api';
+import type { Quarter } from '@/types/generation-tariff/quarter';
 
 @Index('year_quarter_plant_index', ['year', 'quarter', 'plant'], {
   unique: true,
@@ -14,7 +15,7 @@ export class GenerationTariff extends BaseEntity {
   public readonly year: number;
 
   @AutoMap()
-  @Column({ type: 'enum', enum: Quarter, nullable: false })
+  @Column({ type: 'enum', enum: QuarterEnum, nullable: false })
   public readonly quarter: Quarter;
 
   @AutoMap(() => Number)

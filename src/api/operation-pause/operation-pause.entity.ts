@@ -12,11 +12,11 @@ export class OperationPause extends BaseEntity {
 
   @AutoMap()
   @Column('timestamp with time zone', { name: 'end_at', nullable: true })
-  public readonly endAt: Date;
+  public readonly endAt: Date | null;
 
   @ManyToOne(
     () => Operation,
-    (calendarEvent) => calendarEvent.pauses,
+    (operation) => operation.pauses,
     defaultRelationOptions,
   )
   @JoinColumn([{ name: 'operation_id', referencedColumnName: 'id' }])

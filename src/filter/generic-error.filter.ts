@@ -12,6 +12,7 @@ import { getApiErrorResponse } from '@/utils';
 import { DBConflictError } from '@/error/d-b-conflict.error';
 import { ApiErrorResponse } from '@/types/common';
 import { NoDataFoundError } from '@/error/no-data-found.error';
+
 @Catch()
 export class GenericErrorFilter implements ExceptionFilter {
   catch(error: unknown, host: ArgumentsHost): any {

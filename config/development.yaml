@@ -14,7 +14,7 @@ database:
   name: 'helios'
   user: 'helios_admin'
   password: 'dummy'
-  port: 55432
+  port: 2345
 
 file_storage:
   minio:

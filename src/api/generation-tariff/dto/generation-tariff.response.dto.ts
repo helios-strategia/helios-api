@@ -1,7 +1,7 @@
 import { GenerationTariffResponseDto as GenerationTariffResponseDtoType } from '@/types/generation-tariff';
 import { BaseEntityResponseDto } from '@/api/base-entity/base-entity.response.dto';
 import { AutoMap } from '@automapper/classes';
-import { Quarter } from '@/types/common';
+import { Quarter } from '@/types/generation-tariff/quarter';
 
 export class GenerationTariffResponseDto
   extends BaseEntityResponseDto

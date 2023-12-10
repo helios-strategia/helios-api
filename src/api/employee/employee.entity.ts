@@ -4,6 +4,7 @@ import { Position } from '../position/position.entity';
 import { BaseEntity } from '../base-entity/base.entity';
 import { defaultRelationOptions } from '@/consts';
 import { AutoMap } from '@automapper/classes';
+import { Operation } from '../operation/operation.entity';
 
 export type ScheduleScheme = {
   fiveDaySchedule: boolean;
@@ -41,11 +42,11 @@ export class Employee extends BaseEntity {
 
   @AutoMap(() => Object)
   @Column('jsonb', { name: 'schedule_scheme', nullable: true })
-  scheduleScheme?: ScheduleScheme;
+  public readonly scheduleScheme?: ScheduleScheme;
 
   @AutoMap(() => [Plant])
   @ManyToMany(() => Plant, (plant) => plant.employees, defaultRelationOptions)
-  plants: Plant[];
+  public readonly plants: Plant[];
 
   @ManyToOne(
     () => Position,
@@ -53,5 +54,13 @@ export class Employee extends BaseEntity {
     defaultRelationOptions,
   )
   @JoinColumn([{ name: 'position_id', referencedColumnName: 'id' }])
-  position: Position;
+  public readonly position: Position;
+
+  @AutoMap(() => [Operation])
+  @ManyToMany(
+    () => Operation,
+    (operations) => operations.employees,
+    defaultRelationOptions,
+  )
+  public readonly operations: Operation[];
 }

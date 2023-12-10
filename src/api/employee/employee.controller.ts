@@ -86,13 +86,12 @@ export class EmployeeController {
     )
     id: number,
     @Body() employeeUpdateRequestDto: EmployeeUpdateRequestDto,
-    @Headers('Authorization') token,
   ) {
     if (!(await this.employeeService.isPresent(id))) {
       throw new NotFoundException('employee not found');
     }
 
-    return this.employeeService.update(id, employeeUpdateRequestDto, token);
+    return this.employeeService.update(id, employeeUpdateRequestDto);
   }
 
   @Delete(':id')

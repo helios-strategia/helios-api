@@ -23,7 +23,7 @@ import { FormDataRequest } from 'nestjs-form-data';
 import { PlantDocumentCreateRequestDto } from '@/api/plant-document/plant-document-create.request.dto';
 import { PlantService } from '@/api/plant/plant.service';
 import { UserRole } from '@/types/user';
-import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-content-type.middleware';
 
 @ApiBearerAuth()
 @ApiTags('Plant documents')

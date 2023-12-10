@@ -3,6 +3,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
@@ -13,6 +14,7 @@ import { OperationPause } from '@/api/operation-pause/operation-pause.entity';
 import { AutoMap } from '@automapper/classes';
 import { OperationImage } from '@/api/operation-image/operation-image.entity';
 import { defaultRelationOptions, OperationTypeEnum } from '@/consts';
+import { Employee } from '../employee/employee.entity';
 
 @Index(['plant'], { unique: false })
 @Index('plant_id_start_date_title_index', ['plant', 'startDate', 'title'], {
@@ -72,9 +74,19 @@ export class Operation extends BaseEntity {
   public readonly pauses?: OperationPause[];
 
   @AutoMap(() => [OperationImage])
-  @OneToMany(
-    () => OperationImage,
-    (calendarEventImage) => calendarEventImage.operation,
-  )
+  @OneToMany(() => OperationImage, (operationImage) => operationImage.operation)
   public readonly images?: OperationImage[];
+
+  @AutoMap(() => [Employee])
+  @ManyToOne(
+    () => Employee,
+    (employees) => employees.operations,
+    defaultRelationOptions,
+  )
+  @JoinTable({
+    name: 'operation_employee',
+    joinColumn: { name: 'operation_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'employee_id', referencedColumnName: 'id' },
+  })
+  public readonly employees: Employee[];
 }

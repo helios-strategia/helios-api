@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../base-entity/base.entity';
 import { SourcePoint } from '../source-point/source-point.entity';
+import { defaultRelationOptions } from '@/consts';
 
 @Index('model_30817_date_index', ['date', 'id'], {})
 @Entity('model_30817')
@@ -17,9 +18,11 @@ export class Model_30817 extends BaseEntity {
   @Column('float8', { name: 'kvt_per_hour', nullable: true, array: true })
   kvtPerHour: number[] | null;
 
-  @ManyToOne(() => SourcePoint, (sourcePoints) => sourcePoints.row30817List, {
-    createForeignKeyConstraints: false,
-  })
+  @ManyToOne(
+    () => SourcePoint,
+    (sourcePoints) => sourcePoints.row30817List,
+    defaultRelationOptions,
+  )
   @JoinColumn([{ name: 'source_point_id', referencedColumnName: 'id' }])
   sourcePoint: SourcePoint;
 }

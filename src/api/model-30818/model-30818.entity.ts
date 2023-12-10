@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../base-entity/base.entity';
 import { SourcePoint } from '../source-point/source-point.entity';
+import { defaultRelationOptions } from '@/consts';
 
 @Entity('model_30818')
 export class Model_30818 extends BaseEntity {
@@ -34,7 +35,11 @@ export class Model_30818 extends BaseEntity {
   })
   tariff_3: number | null;
 
-  @ManyToOne(() => SourcePoint, (sourcePoints) => sourcePoints.row30818List)
+  @ManyToOne(
+    () => SourcePoint,
+    (sourcePoints) => sourcePoints.row30818List,
+    defaultRelationOptions,
+  )
   @JoinColumn([{ name: 'source_point_id', referencedColumnName: 'id' }])
   sourcePoint: SourcePoint;
 }

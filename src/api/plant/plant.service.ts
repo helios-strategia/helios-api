@@ -105,7 +105,7 @@ export class PlantService {
     try {
       const [documentsUpload, imagesUpload, taxStatementUrl, mainPlanUrl] =
         await this.plantFilesService.upload({
-          [PlantFileTypes.Documents]: documents.map((doc, i) => ({
+          [PlantFileTypes.Documents]: documents?.map((doc, i) => ({
             file: doc,
             documentType: documentTypes[i] as PlantDocumentType,
           })),

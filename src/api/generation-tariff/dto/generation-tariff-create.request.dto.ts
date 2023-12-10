@@ -7,8 +7,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Quarter } from '@/types/common';
 import { enumValidationMessage } from '@/utils';
+import { QuarterEnum } from '@/consts';
 
 export class GenerationTariffCreateRequestDto
   implements GenerationTariffCreateRequestDtoType
@@ -19,10 +19,10 @@ export class GenerationTariffCreateRequestDto
   public readonly costPerKilowattHour: number;
 
   @IsNotEmpty()
-  @IsEnum(Quarter, {
-    message: enumValidationMessage('quarter', Quarter),
+  @IsEnum(QuarterEnum, {
+    message: enumValidationMessage('quarter', QuarterEnum),
   })
-  public readonly quarter: Quarter;
+  public readonly quarter: QuarterEnum;
 
   @IsNotEmpty()
   @IsNumber()

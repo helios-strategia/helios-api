@@ -16,7 +16,7 @@ import {
   MemoryStoredFile,
 } from 'nestjs-form-data';
 import { Type } from 'class-transformer';
-import { ParseOptionalBoolean } from '@/mapper/optional-boolean.mapper';
+import { ParseOptionalBoolean } from '@/library/mapper/optional-boolean.mapper';
 
 export class EmployeeCreateRequestDto {
   @ApiProperty({ type: 'string', format: 'binary', required: false })
@@ -83,19 +83,6 @@ export class EmployeeCreateRequestDto {
 }
 
 export class EmployeeUpdateRequestDto {
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
-  @IsOptional()
-  @IsFile()
-  @MaxFileSize(5e6)
-  @HasMimeType(['image/jpeg', 'image/png'])
-  public readonly avatar?: MemoryStoredFile;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  @ParseOptionalBoolean()
-  public readonly deleteAvatar?: boolean;
-
   @ApiProperty()
   @IsOptional()
   @IsString()

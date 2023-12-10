@@ -19,7 +19,7 @@ import { JwtAuthGuard } from '@/api/auth/jwt-auth.guard';
 import { RolesGuard } from '@/api/auth/roles.guard';
 import { Roles } from '@/api/auth/roles.decorator';
 import { UserRole } from '@/types/user';
-import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-content-type.middleware';
 import { FormDataRequest } from 'nestjs-form-data';
 import { PlantsEquipmentsEventsCreateRequestDto } from '@/api/plant-equipments-events/dto/plants-equipments-events-create.request.dto';
 import { PlantsEquipmentsEventsService } from '@/api/plant-equipments-events/plants-equipments-events.service';

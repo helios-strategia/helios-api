@@ -6,12 +6,13 @@ import { DataSource } from 'typeorm';
 export class TransactionPerformer {
   @InjectDataSource()
   private readonly dataSource: DataSource;
+
   public async perform<T>({
     callback,
     logMeta,
   }: {
-    callback: () => Promise<T | undefined>;
-    logMeta?: Record<string, any>;
+    callback: () => Promise<T | undefined> | never;
+    logMeta?: Record<string, unknown>;
   }) {
     const queryRunner = this.dataSource.createQueryRunner();
 

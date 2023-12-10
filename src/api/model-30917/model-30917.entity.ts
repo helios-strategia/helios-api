@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { SourcePoint } from '../source-point/source-point.entity';
 import { BaseEntity } from '../base-entity/base.entity';
 import { Model30917Channel } from '@/types/model-30917';
+import { defaultRelationOptions } from '@/consts';
 
 @Entity('model_30917', { schema: 'public' })
 export class Model_30917 extends BaseEntity {
@@ -20,9 +21,11 @@ export class Model_30917 extends BaseEntity {
   @Column('float8', { name: 'kvt_per_half_hour', nullable: true, array: true })
   kvtPerHalfHour: number[] | null;
 
-  @ManyToOne(() => SourcePoint, (sourcePoint) => sourcePoint.row30917List, {
-    createForeignKeyConstraints: false,
-  })
+  @ManyToOne(
+    () => SourcePoint,
+    (sourcePoint) => sourcePoint.row30917List,
+    defaultRelationOptions,
+  )
   @JoinColumn([{ name: 'source_point_id', referencedColumnName: 'id' }])
   sourcePoint: SourcePoint;
 }

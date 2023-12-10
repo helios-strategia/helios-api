@@ -30,7 +30,7 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger';
 import { FileService } from '@/library/file-serivce/file-service';
-import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-content-type.middleware';
 import { UserResponseDto } from './dto/user.response.dto';
 import { UserCreateRequestDto } from './dto/user-create.request.dto';
 import { UserUpdateRequestDto } from './dto/user-update.request.dto';

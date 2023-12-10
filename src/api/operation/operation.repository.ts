@@ -1,6 +1,7 @@
 import { DataSource, Repository } from 'typeorm';
 import { Operation } from '@/api/operation/operation.entity';
 import { Injectable } from '@nestjs/common';
+import { DateString } from '@/types';
 
 @Injectable()
 export class OperationRepository extends Repository<Operation> {
@@ -14,8 +15,8 @@ export class OperationRepository extends Repository<Operation> {
     endDate,
   }: {
     plantId: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: DateString;
+    endDate?: DateString;
   }) {
     const query = this.createQueryBuilder().where('plant_id = :plantId', {
       plantId,
@@ -23,12 +24,12 @@ export class OperationRepository extends Repository<Operation> {
 
     if (startDate && endDate) {
       query
-        .andWhere('calendar_event.start_date >= :startDate', { startDate })
-        .andWhere('calendar_event.end_date <= :endDate', { endDate });
+        .andWhere('start_date >= :startDate', { startDate })
+        .andWhere('end_date <= :endDate', { endDate });
     } else if (startDate) {
-      query.andWhere('calendar_event.start_date >= :startDate', { startDate });
+      query.andWhere('start_date >= :startDate', { startDate });
     } else if (endDate) {
-      query.andWhere('calendar_event.end_date <= :endDate', { endDate });
+      query.andWhere('end_date <= :endDate', { endDate });
     }
 
     return query.getMany();

@@ -22,7 +22,7 @@ import { RolesGuard } from '@/api/auth/roles.guard';
 import { PlantService } from '@/api/plant/plant.service';
 import { Roles } from '@/api/auth/roles.decorator';
 import { FormDataRequest } from 'nestjs-form-data';
-import { ValidateContentTypeMiddleware } from '@/middleware/validate-content-type.middleware';
+import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-content-type.middleware';
 import { PlantCreateRequestDto, PlantUpdateRequestDto } from '@/api/plant/dto';
 import { UserRole } from '@/types/user';
 import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.service';

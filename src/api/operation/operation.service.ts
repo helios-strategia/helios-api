@@ -12,9 +12,10 @@ import { OperationUpdateRequestDto } from '@/api/operation/dto/operation-update.
 import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
 import { getDeleteApiResponse } from '@/utils';
 import { BaseService } from '@/api/base-entity/base.service';
-import { isBefore, isEqual } from 'date-fns';
+import { isBefore, isEqual, isAfter } from 'date-fns';
 import { ValidationError } from '@/error/validation.error';
 import { DBConflictError } from '@/error/d-b-conflict.error';
+import { DateString, UserRole } from '@/types';
 
 @Injectable()
 export class OperationService extends BaseService<Operation> {
@@ -23,7 +24,7 @@ export class OperationService extends BaseService<Operation> {
   @Inject(PlantService)
   private readonly plantService: PlantService;
   @Inject(OperationImageService)
-  private readonly calendarEventImageService: OperationImageService;
+  private readonly operationImageService: OperationImageService;
   @Inject(TransactionPerformer)
   private readonly transactionPerformer: TransactionPerformer;
 
@@ -32,15 +33,15 @@ export class OperationService extends BaseService<Operation> {
   }
 
   public async create(operationCreateRequestDto: OperationCreateRequestDto) {
-    const { images, plantId, ...restCalendarEventCreateRequestDto } =
+    const { images, plantId, ...restOperationCreateRequestDto } =
       operationCreateRequestDto;
-    const { startDate, title } = restCalendarEventCreateRequestDto;
+    const { startDate, title } = restOperationCreateRequestDto;
     const plant = await this.plantService.findByIdOrElseThrowNotFoundError(
       plantId,
     );
 
-    if (isNil(plant)) {
-      throw new NoDataFoundError(Plant, plantId);
+    if (isAfter(new Date(), operationCreateRequestDto.startDate)) {
+      throw new ValidationError(`Can't create operation in past`);
     }
 
     if (
@@ -69,15 +70,20 @@ export class OperationService extends BaseService<Operation> {
     }
 
     if (images?.length) {
-      const trxResult = await this.transactionPerformer.perform({
+      const {
+        success,
+        data: operation,
+        error,
+      } = await this.transactionPerformer.perform({
         callback: async () => {
-          const calendarEventImages =
-            await this.calendarEventImageService.bulkCreate(...images);
+          const operationImages = await this.operationImageService.bulkCreate(
+            ...images,
+          );
 
           return this.operationRepository.save(
             {
-              ...restCalendarEventCreateRequestDto,
-              images: calendarEventImages,
+              ...restOperationCreateRequestDto,
+              images: operationImages,
               plant,
             },
             { transaction: false },
@@ -85,44 +91,44 @@ export class OperationService extends BaseService<Operation> {
         },
       });
 
-      if (!trxResult.success) {
-        throw trxResult.error;
+      if (!success) {
+        throw error;
       }
 
       Logger.log(`${this.className}#create`, {
-        calendarEvent: trxResult.data,
+        operation,
       });
 
-      return trxResult.data;
+      return operation;
     }
 
-    const calendarEvent = await this.operationRepository.save({
-      ...restCalendarEventCreateRequestDto,
+    const operation = await this.operationRepository.save({
+      ...restOperationCreateRequestDto,
       plant,
     });
 
     Logger.log(`${this.className}#create`, {
-      calendarEvent,
+      operation,
     });
 
-    return calendarEvent;
+    return operation;
   }
 
   public async update(
     id: number,
-    calendarEventUpdateRequest: OperationUpdateRequestDto,
+    operationUpdateRequestDto: OperationUpdateRequestDto,
   ) {
-    const oldCalendarEvent = await this.findByIdOrElseThrow(id);
+    const oldOperation = await this.findByIdOrElseThrow(id);
     const updateResult = await this.operationRepository.update(
       id,
-      calendarEventUpdateRequest,
+      operationUpdateRequestDto,
     );
 
     Logger.log(`${this.className}#update`, {
       ...this.getLogMeta,
-      calendarEventUpdateRequest,
+      operationUpdateRequestDto,
       updateResult,
-      oldCalendarEvent,
+      oldOperation,
     });
 
     return this.operationRepository.findOne({ where: { id } });
@@ -134,15 +140,17 @@ export class OperationService extends BaseService<Operation> {
     endDate,
   }: {
     plantId: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: DateString;
+    endDate?: DateString;
   }) {
-    const userPlants = await this.plantService.findAllByUserId(
-      this.requestContextService.getUserId,
-    );
+    if (this.requestContextService.getUser.role === UserRole.CLIENT) {
+      const userPlants = await this.plantService.findAllByUserId(
+        this.requestContextService.getUserId,
+      );
 
-    if (!userPlants.some(({ id }) => id === plantId)) {
-      throw new RouteNoDataFoundError(Plant, plantId);
+      if (!userPlants.some(({ id }) => id === plantId)) {
+        throw new RouteNoDataFoundError(Plant, plantId);
+      }
     }
 
     return this.operationRepository.findAllByPlantAndStartAtAndEndAt({
@@ -153,16 +161,16 @@ export class OperationService extends BaseService<Operation> {
   }
 
   public async findByIdOrElseThrow(id: number) {
-    const calendarEvent = await this.operationRepository.findOne({
+    const operation = await this.operationRepository.findOne({
       where: { id },
       relations: { pauses: true, images: true },
     });
 
-    if (isNil(calendarEvent)) {
+    if (isNil(operation)) {
       throw new RouteNoDataFoundError(Operation, id);
     }
 
-    return calendarEvent;
+    return operation;
   }
 
   public findById(id: number) {
@@ -170,13 +178,13 @@ export class OperationService extends BaseService<Operation> {
   }
 
   public async delete(id: number) {
-    const calendarEventToDelete = await this.findByIdOrElseThrow(id);
+    const operationToDelete = await this.findByIdOrElseThrow(id);
     const deleteResult = await this.operationRepository.delete(id);
 
-    Logger.log('OperationService#delete', {
+    Logger.log(`${this.className}#delete`, {
       ...this.getLogMeta,
       id,
-      calendarEventToDelete,
+      calendarEventToDelete: operationToDelete,
       deleteResult,
     });
 

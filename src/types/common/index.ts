@@ -22,13 +22,8 @@ export interface ObjectLiteral {
   [key: string]: any;
 }
 
-export enum Quarter {
-  First = 1,
-  Second = 2,
-  Third = 3,
-  Four = 4,
-}
+export type DateString = string;
 
-type InputSignleEitherArray<T> = T | T[];
-
-type OutputSignleEitherArray<T> = T extends T[] ? T[] : T;
+export type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};

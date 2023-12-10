@@ -10,15 +10,17 @@ import { Position } from '@/api/position/position.entity';
 import { PlantService } from '@/api/plant/plant.service';
 import { Plant } from '@/api/plant/plant.entity';
 import { isNil, omit } from 'lodash';
-import { ScheduleScheme } from '@/api/employee/employee.entity';
-import { FileService } from '@/library/file-serivce/file-service';
+import { Employee, ScheduleScheme } from '@/api/employee/employee.entity';
+import { RouteNoDataFoundError } from '@/error/route-no-data-found.error';
+import { MinioFileService } from '@/library/file-serivce/minio-file-service';
+import { Mutable } from '@/types';
 
 @Injectable()
 export class EmployeeService {
   @Inject(EmployeeRepository)
   private readonly employeeRepository: EmployeeRepository;
-  @Inject(FileService)
-  private readonly fileService: FileService;
+  @Inject(MinioFileService)
+  private readonly fileService: MinioFileService;
   @Inject(PositionService)
   private readonly positionService: PositionService;
   @Inject(PlantService)
@@ -136,19 +138,12 @@ export class EmployeeService {
   public async update(
     id: number,
     employeeUpdateRequestDto: EmployeeUpdateRequestDto,
-    token: string,
   ) {
     Logger.log('EmployeeService#update', {
-      avatar: {
-        size: employeeUpdateRequestDto?.avatar?.size,
-        ext: employeeUpdateRequestDto?.avatar?.mimetype,
-      },
-      ...omit(employeeUpdateRequestDto, 'avatar'),
+      employeeUpdateRequestDto,
     });
 
     const {
-      avatar,
-      deleteAvatar,
       plantIds,
       positionId,
       fiveDaySchedule,
@@ -163,6 +158,14 @@ export class EmployeeService {
       where: { id },
     });
 
+    if (isNil(employeeToUpdate)) {
+      throw new RouteNoDataFoundError(Employee, id);
+    }
+
+    const updatePayload: Mutable<
+      Pick<Partial<Employee>, 'position' | 'plants'>
+    > = {};
+
     if (positionId) {
       const position = await this.positionService.getById(positionId);
 
@@ -170,7 +173,7 @@ export class EmployeeService {
         throw new NoDataFoundError(Position, positionId);
       }
 
-      employeeToUpdate.position = position;
+      updatePayload.position = position;
     }
 
     if (plantIds) {
@@ -180,42 +183,13 @@ export class EmployeeService {
 
       Logger.log('EmployeeService#update plants fetched', { plants, count });
 
-      employeeToUpdate.plants = plants;
+      updatePayload.plants = plants;
     }
 
-    if (deleteAvatar === true) {
-      try {
-        const fileServerDeletedFile = await this.fileService.delete(
-          employeeToUpdate.avatarUrl.substring(
-            employeeToUpdate.avatarUrl.lastIndexOf('/') + 1,
-          ),
-          token,
-        );
-
-        employeeToUpdate.avatarUrl = null;
-
-        Logger.log('EmployeeService#update fileServer delete', {
-          fileServerDeletedFile,
-        });
-      } catch (e) {
-        employeeToUpdate.avatarUrl = null;
-
-        Logger.warn(
-          'EmployeeService#update fileServer delete -> file not found',
-          { fileUrl: employeeToUpdate?.avatarUrl, error: e.message },
-        );
-      }
-    }
-
-    if (deleteAvatar !== true && avatar) {
-      employeeToUpdate.avatarUrl = await this.fileService.upload(avatar, token);
-
-      Logger.log('EmployeeService::update fileServer upload');
-    }
-
-    const updatedEmployee = await this.employeeRepository.save({
+    const updatedEmployee = await this.employeeRepository.update(id, {
       ...employeeToUpdate,
       ...restPayload,
+      ...updatePayload,
       scheduleScheme: this.updateScheduleSchema(
         employeeToUpdate.scheduleScheme,
         {

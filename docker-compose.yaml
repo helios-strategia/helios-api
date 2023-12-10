@@ -1,4 +1,5 @@
-version: '3'
+version: '3.8'
+
 services:
   storage:
     image: minio/minio
@@ -9,14 +10,13 @@ services:
       MINIO_ROOT_PASSWORD: 'minio_admin'
       MINIO_ADDRESS: ':9000'
       MINIO_CONSOLE_ADDRESS: ':9001'
-      MINIO_NOTIFY_WEBHOOK_ENABLE: on
-      MINIO_NOTIFY_WEBHOOK_ENDPOINT: 'http://localhost:8092/api/v0/test'
     volumes:
       - storage:/var/lib/minio/data
     ports:
       - "9010:9000"
       - "9011:9001"
     command: server /data
+    #network_mode: host
   db:
     container_name: "helios_database"
     image: postgres:latest
@@ -28,7 +28,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
-      - "55432:5432"
+      - "2345:5432"
     logging:
       driver: none
   app:
