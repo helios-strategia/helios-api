@@ -28,7 +28,7 @@ import { ValidateContentTypeMiddleware } from '@/library/middleware/validate-con
 @ApiBearerAuth()
 @ApiTags('Plant documents')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('/api/v1/plant-documents')
+@Controller('/v1/plant-documents')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PlantDocumentController {
   @Inject(PlantDocumentService)

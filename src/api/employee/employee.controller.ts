@@ -34,7 +34,7 @@ import { UserRole } from '@/types/user';
 @Roles(UserRole.ADMIN)
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('api/v1/employees')
+@Controller('/v1/employees')
 export class EmployeeController {
   @Inject(EmployeeService)
   private readonly employeeService: EmployeeService;

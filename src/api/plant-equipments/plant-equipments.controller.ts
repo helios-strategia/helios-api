@@ -14,7 +14,7 @@ import { PlantEquipmentsService } from '@/api/plant-equipments/plant-equipments.
 @ApiBearerAuth()
 @ApiTags('plants')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/plant-equipments')
+@Controller('/v1/plant-equipments')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PlantEquipmentsController {
   @Inject(PlantEquipmentsService)

@@ -39,7 +39,7 @@ import { OperationPauseResponseDto } from '@/api/operation-pause/dto/operation-p
 @ApiTags('Operations')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('api/v1/operations')
+@Controller('/v1/operations')
 export class OperationController extends BaseController<
   Operation,
   OperationResponseDto

@@ -39,7 +39,7 @@ import { UserRole } from '@/types/user';
 @ApiBearerAuth()
 @ApiTags('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('/api/v1/users')
+@Controller('/v1/users')
 export class UserController {
   @Inject(UserService)
   private readonly service: UserService;

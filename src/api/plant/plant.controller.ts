@@ -40,7 +40,7 @@ import { QueryFailedErrorFilter } from '@/filter/query-failed-error.filter';
 @ApiBearerAuth()
 @ApiTags('plants')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/plants')
+@Controller('/v1/plants')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PlantController {
   @Inject(PlantService)

@@ -23,7 +23,7 @@ import { UserRole } from '@/types/user';
 @ApiBearerAuth()
 @ApiTags('source points')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/source-points')
+@Controller('/v1/source-points')
 @UseInterceptors(ClassSerializerInterceptor)
 export class SourcePointController {
   @Inject(SourcePointService)

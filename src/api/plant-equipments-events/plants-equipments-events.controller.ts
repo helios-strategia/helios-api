@@ -31,7 +31,7 @@ import { PlantEquipmentsEventsImagesCreateRequestDto } from '@/api/plant-equipme
 @ApiBearerAuth()
 @ApiTags('Plants Equipments Events')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/plants-equipments-events')
+@Controller('/v1/plants-equipments-events')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PlantsEquipmentsEventsController {
   @Inject(PlantsEquipmentsEventsService)

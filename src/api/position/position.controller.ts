@@ -28,7 +28,7 @@ import { Position } from '@/api/position/position.entity';
 @ApiBearerAuth()
 @ApiTags('positions')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/positions')
+@Controller('/v1/positions')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PositionController extends BaseController<
   Position,

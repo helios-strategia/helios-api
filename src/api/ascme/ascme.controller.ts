@@ -18,7 +18,7 @@ import { RolesGuard } from '@/api/auth/roles.guard';
 @ApiBearerAuth()
 @ApiTags('ascme')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller('api/v1/ascme')
+@Controller('/v1/ascme')
 export class AscmeController {
   @Inject()
   private readonly ascmeService: AscmeService;
