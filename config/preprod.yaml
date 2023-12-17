@@ -4,5 +4,5 @@ database:
 
 file_storage:
   minio:
-    endpoint: "storage"
+    end_point: "storage"
     port: 9000
