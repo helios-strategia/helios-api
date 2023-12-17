@@ -1,0 +1,8 @@
+database:
+  host: "db"
+  port: 5432
+
+file_storage:
+  minio:
+    endpoint: "storage"
+    port: "9000"
