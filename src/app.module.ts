@@ -12,6 +12,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import * as config from 'config';
 import { EventsModule } from '@/event/events.module';
 import { RequestContextModule } from '@/request-context/request-context.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -44,6 +46,10 @@ import { RequestContextModule } from '@/request-context/request-context.module';
     }),
     EventsModule,
     RequestContextModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      renderPath: '/',
+    }),
   ],
 
   controllers: [],
